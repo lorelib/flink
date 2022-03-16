@@ -174,6 +174,7 @@ public class BlobServer extends Thread implements BlobService, BlobWriter, Perma
 		final String serverPortRange = config.getString(BlobServerOptions.PORT);
 		final Iterator<Integer> ports = NetUtils.getPortRangeFromString(serverPortRange);
 
+		// TODO 采用JDK自带套接字编程
 		final ServerSocketFactory socketFactory;
 		if (SSLUtils.isInternalSSLEnabled(config) && config.getBoolean(BlobServerOptions.SSL_ENABLED)) {
 			try {
@@ -251,6 +252,7 @@ public class BlobServer extends Thread implements BlobService, BlobWriter, Perma
 	public void run() {
 		try {
 			while (!this.shutdownRequested.get()) {
+				// TODO 开启 serverSocket 监听，并创建Blob数据处理线程
 				BlobServerConnection conn = new BlobServerConnection(serverSocket.accept(), this);
 				try {
 					synchronized (activeConnections) {
@@ -260,6 +262,7 @@ public class BlobServer extends Thread implements BlobService, BlobWriter, Perma
 						activeConnections.add(conn);
 					}
 
+					// TODO 启动数据处理线程
 					conn.start();
 					conn = null;
 				}

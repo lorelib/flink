@@ -41,6 +41,10 @@ public class StandaloneSessionClusterEntrypoint extends SessionClusterEntrypoint
 		return new SessionDispatcherResourceManagerComponentFactory(StandaloneResourceManagerFactory.INSTANCE);
 	}
 
+	/**
+	 * args = [--configDir, /opt/bigdata/flink-1.9.3/conf, --executionMode, cluster]
+	 * @param args
+	 */
 	public static void main(String[] args) {
 		// startup checks and logging
 		EnvironmentInformation.logEnvironmentInfo(LOG, StandaloneSessionClusterEntrypoint.class.getSimpleName(), args);

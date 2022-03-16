@@ -117,8 +117,10 @@ public abstract class AbstractDispatcherResourceManagerComponentFactory<T extend
 		T dispatcher = null;
 
 		try {
+			// TODO ZooKeeperHaServices， 返回 ZooKeeperLeaderRetrievalService，Dispatcher 主检索服务， zookeeper 节点目录: /resource_manager_lock
 			dispatcherLeaderRetrievalService = highAvailabilityServices.getDispatcherLeaderRetriever();
 
+			// TODO ResourceManager 主检索服务, zookeeper 节点目录: /dispatcher_lock
 			resourceManagerRetrievalService = highAvailabilityServices.getResourceManagerLeaderRetriever();
 
 			final LeaderGatewayRetriever<DispatcherGateway> dispatcherGatewayRetriever = new RpcGatewayRetriever<>(

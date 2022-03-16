@@ -46,7 +46,9 @@ public abstract class SessionClusterEntrypoint extends ClusterEntrypoint {
 			ScheduledExecutor scheduledExecutor) throws IOException {
 		final File tmpDir = new File(ConfigurationUtils.parseTempDirectories(configuration)[0]);
 
+		// TODO jobstore.expiration-time 已完成的job, 过期时间默认为 1 小时, 到期清除
 		final Time expirationTime =  Time.seconds(configuration.getLong(JobManagerOptions.JOB_STORE_EXPIRATION_TIME));
+		// TODO jobstore.cache-size 默认缓存 50MB 已完成的JOB
 		final long maximumCacheSizeBytes = configuration.getLong(JobManagerOptions.JOB_STORE_CACHE_SIZE);
 
 		return new FileArchivedExecutionGraphStore(

@@ -52,6 +52,7 @@ public enum HighAvailabilityMode {
 	 * configured.
 	 */
 	public static HighAvailabilityMode fromConfig(Configuration config) {
+		// TODO high-availability 获取高可用方案，一般配置 zookeeper
 		String haMode = config.getValue(HighAvailabilityOptions.HA_MODE);
 
 		if (haMode == null) {

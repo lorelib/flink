@@ -293,13 +293,17 @@ public abstract class FileSystem {
 			FS_FACTORIES.clear();
 
 			Collection<Supplier<Iterator<FileSystemFactory>>> factorySuppliers = new ArrayList<>(2);
+			// 这里加载了 MapRFsFactory (FileSystemFactory)，这里利用了java的SPI机制
+			// TODO 由该Factory生产 HadoopFileSystem
 			factorySuppliers.add(() -> ServiceLoader.load(FileSystemFactory.class).iterator());
 
 			if (pluginManager != null) {
+				// 默认pluginManager中没配置FileSystemFactory
 				factorySuppliers.add(() ->
 					Iterators.transform(pluginManager.load(FileSystemFactory.class), PluginFileSystemFactory::of));
 			}
 
+			// 加载文件系统工厂类
 			final List<FileSystemFactory> fileSystemFactories = loadFileSystemFactories(factorySuppliers);
 
 			// configure all file system factories
@@ -1012,6 +1016,9 @@ public abstract class FileSystem {
 			}
 		}
 
+		/**
+		 * list包含2个FileSystemFactory: 1) LocalFileSystemFactory  2) MapRFsFactory
+		 */
 		return Collections.unmodifiableList(list);
 	}
 

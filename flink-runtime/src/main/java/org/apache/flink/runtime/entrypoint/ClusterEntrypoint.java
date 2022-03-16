@@ -92,6 +92,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * Base class for the Flink cluster entry points.
  *
  * <p>Specialization of this class can be used for the session mode and the per-job mode
+ *
+ * TODO ClusterEntrypoint 有2类，分别为: SessionClusterEntrypoint 和 JobClusterEntrypoint
+ * 	这2种ClusterEntrypoint下包含: standalone yarn mesos 3种
  */
 public abstract class ClusterEntrypoint implements AutoCloseableAsync, FatalErrorHandler {
 
@@ -155,12 +158,22 @@ public abstract class ClusterEntrypoint implements AutoCloseableAsync, FatalErro
 		LOG.info("Starting {}.", getClass().getSimpleName());
 
 		try {
-
+			/**
+			 * TODO 配置文件系统
+			 *  configuration: {
+			 * 	 env.java.opts.jobmanager=xxx, parallelism.default=1,
+			 * 	 jobmanager.execution.failover-strategy=region, jobmanager.rpc.address=node01,
+			 * 	 taskmanager.numberOfTaskSlots=2, web.tmpdir=/tmp/flink-web-7bd4b858-12a0-4696-a68c-bc4394501cf0,
+			 * 	 env.java.opts.taskmanager=xxx, jobmanager.rpc.port=6123, taskmanager.heap.size=1024m,
+			 * 	 jobmanager.heap.size=1024m
+			 *  }
+ 			 */
 			configureFileSystems(configuration);
 
 			SecurityContext securityContext = installSecurityContext(configuration);
 
 			securityContext.runSecured((Callable<Void>) () -> {
+				// TODO 启动集群
 				runCluster(configuration);
 
 				return null;
@@ -197,16 +210,25 @@ public abstract class ClusterEntrypoint implements AutoCloseableAsync, FatalErro
 		return SecurityUtils.getInstalledContext();
 	}
 
+	// TODO 启动集群
 	private void runCluster(Configuration configuration) throws Exception {
 		synchronized (lock) {
+			// TODO 初始化基础服务
 			initializeServices(configuration);
 
 			// write host information into configuration
 			configuration.setString(JobManagerOptions.ADDRESS, commonRpcService.getAddress());
 			configuration.setInteger(JobManagerOptions.PORT, commonRpcService.getPort());
 
+			/**
+			 * TODO Session模式返回的是: SessionDispatcherResourceManagerComponentFactory, 非session模式: JobDispatcherResourceManagerComponentFactory
+			 *  分别由各自的 ClusterEntrypoint 实现类创建
+			 */
 			final DispatcherResourceManagerComponentFactory<?> dispatcherResourceManagerComponentFactory = createDispatcherResourceManagerComponentFactory(configuration);
 
+			/**
+			 * TODO 完成这一步，主节点就启动完成
+			 */
 			clusterComponent = dispatcherResourceManagerComponentFactory.create(
 				configuration,
 				ioExecutor,
@@ -238,32 +260,49 @@ public abstract class ClusterEntrypoint implements AutoCloseableAsync, FatalErro
 		}
 	}
 
+	/**
+	 * 初始化基础服务，共创建了7种基础组件服务
+	 * @param configuration
+	 * @throws Exception
+	 */
 	protected void initializeServices(Configuration configuration) throws Exception {
 
 		LOG.info("Initializing cluster services.");
 
 		synchronized (lock) {
+			// jobmanager.rpc.address
 			final String bindAddress = configuration.getString(JobManagerOptions.ADDRESS);
+			// 非HA模式下: port 默认 6123 (jobmanager.rpc.port);
+			// HA模式下，模式是0，需要手动配置端口范围(high-availability.jobmanager.port)
 			final String portRange = getRPCPortRange(configuration);
 
+			// TODO 创建 AkkaRpcService 对象，里面封装了 ActorSystem
 			commonRpcService = createRpcService(configuration, bindAddress, portRange);
 
 			// update the configuration used to create the high availability services
 			configuration.setString(JobManagerOptions.ADDRESS, commonRpcService.getAddress());
 			configuration.setInteger(JobManagerOptions.PORT, commonRpcService.getPort());
 
+			// 创建IO线程池
 			ioExecutor = Executors.newFixedThreadPool(
 				Hardware.getNumberCPUCores(),
 				new ExecutorThreadFactory("cluster-io"));
+			// TODO 创建高可用服务，生产环境一般为: ZooKeeperHaServices
 			haServices = createHaServices(configuration, ioExecutor);
+			// TODO 创建大对象存储服务，BlobServer 继承了 Thread，采用JDK自带套接字编程
 			blobServer = new BlobServer(configuration, haServices.createBlobStore());
 			blobServer.start();
+			// TODO 创建心跳服务，心跳间隔10秒，超时为50秒
 			heartbeatServices = createHeartbeatServices(configuration);
+			// TODO 创建监控注册服务
 			metricRegistry = createMetricRegistry(configuration);
 
+			// AkkaRpcService , 启动 metric query service
 			final RpcService metricQueryServiceRpcService = MetricUtils.startMetricsRpcService(configuration, bindAddress);
 			metricRegistry.startQueryService(metricQueryServiceRpcService, null);
 
+			// TODO 创建 ExecutionGraph 存储服务，返回 FileArchivedExecutionGraphStore 对象，
+			//  用于存储已完成job的 ExecutionGraph ，并默认存储 50MB ExecutionGraph 在内存，定期清理已过期的 ExecutionGraph，过期时间默认1小时
 			archivedExecutionGraphStore = createSerializableExecutionGraphStore(configuration, commonRpcService.getScheduledExecutor());
 		}
 	}
@@ -283,6 +322,7 @@ public abstract class ClusterEntrypoint implements AutoCloseableAsync, FatalErro
 		if (ZooKeeperUtils.isZooKeeperRecoveryMode(configuration)) {
 			return configuration.getString(HighAvailabilityOptions.HA_JOB_MANAGER_PORT_RANGE);
 		} else {
+			// jobmanager.rpc.port 默认 6123
 			return String.valueOf(configuration.getInteger(JobManagerOptions.PORT));
 		}
 	}

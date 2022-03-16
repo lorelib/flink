@@ -123,6 +123,7 @@ public class MetricUtils {
 	}
 
 	public static RpcService startMetricsRpcService(Configuration configuration, String hostname) throws Exception {
+		// metrics.internal.query-service.port 默认为0，将随机生成端口
 		final String portRange = configuration.getString(MetricOptions.QUERY_SERVICE_PORT);
 		final int threadPriority = configuration.getInteger(MetricOptions.QUERY_SERVICE_THREAD_PRIORITY);
 

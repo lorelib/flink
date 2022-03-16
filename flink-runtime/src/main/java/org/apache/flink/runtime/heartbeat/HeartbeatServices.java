@@ -107,8 +107,9 @@ public class HeartbeatServices {
 	 * @return An HeartbeatServices instance created from the given configuration
 	 */
 	public static HeartbeatServices fromConfiguration(Configuration configuration) {
+		// TODO 心跳间隔10秒
 		long heartbeatInterval = configuration.getLong(HeartbeatManagerOptions.HEARTBEAT_INTERVAL);
-
+		// TODO 心跳超时50秒
 		long heartbeatTimeout = configuration.getLong(HeartbeatManagerOptions.HEARTBEAT_TIMEOUT);
 
 		return new HeartbeatServices(heartbeatInterval, heartbeatTimeout);

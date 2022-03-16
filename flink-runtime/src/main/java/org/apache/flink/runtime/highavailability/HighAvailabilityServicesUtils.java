@@ -81,6 +81,7 @@ public class HighAvailabilityServicesUtils {
 
 		HighAvailabilityMode highAvailabilityMode = HighAvailabilityMode.fromConfig(configuration);
 
+		// TODO 生产环境我们一般使用 ZOOKEEPER
 		switch (highAvailabilityMode) {
 			case NONE:
 				final Tuple2<String, Integer> hostnamePort = getJobManagerAddress(configuration);
@@ -117,6 +118,7 @@ public class HighAvailabilityServicesUtils {
 					jobManagerRpcUrl,
 					String.format("%s%s:%s", protocol, address, port));
 			case ZOOKEEPER:
+				// TODO
 				BlobStoreService blobStoreService = BlobUtils.createBlobStoreFromConfig(configuration);
 
 				return new ZooKeeperHaServices(
