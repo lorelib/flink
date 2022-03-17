@@ -135,9 +135,14 @@ public abstract class RestServerEndpoint implements AutoCloseableAsync {
 
 			log.info("Starting rest endpoint.");
 
+			// TODO 请求路由器
 			final Router router = new Router();
 			final CompletableFuture<String> restAddressFuture = new CompletableFuture<>();
 
+			/**
+			 * TODO 初始化处理器
+			 * @see org.apache.flink.runtime.webmonitor.WebMonitorEndpoint#initializeHandlers
+			 */
 			handlers = initializeHandlers(restAddressFuture);
 
 			/* sort the handlers such that they are ordered the following:
@@ -152,9 +157,12 @@ public abstract class RestServerEndpoint implements AutoCloseableAsync {
 				RestHandlerUrlComparator.INSTANCE);
 
 			handlers.forEach(handler -> {
+				// TODO 将handler注册到router
 				registerHandler(router, handler, log);
 			});
 
+			// flink将netty的包名使用maven-shade-plugin插件替换了，实际上还是netty的类
+			// 初始化channel，添加 ChannelHandler
 			ChannelInitializer<SocketChannel> initializer = new ChannelInitializer<SocketChannel>() {
 
 				@Override
@@ -178,8 +186,10 @@ public abstract class RestServerEndpoint implements AutoCloseableAsync {
 			};
 
 			NioEventLoopGroup bossGroup = new NioEventLoopGroup(1, new ExecutorThreadFactory("flink-rest-server-netty-boss"));
+			// TODO 此处将线程数设置为0，在netty内部会默认调整为: Runtime.getRuntime().availableProcessors() * 2
 			NioEventLoopGroup workerGroup = new NioEventLoopGroup(0, new ExecutorThreadFactory("flink-rest-server-netty-worker"));
 
+			// TODO 构建netty服务端
 			bootstrap = new ServerBootstrap();
 			bootstrap
 				.group(bossGroup, workerGroup)
@@ -200,6 +210,7 @@ public abstract class RestServerEndpoint implements AutoCloseableAsync {
 				try {
 					chosenPort = portsIterator.next();
 					final ChannelFuture channel;
+					// 绑定端口
 					if (restBindAddress == null) {
 						channel = bootstrap.bind(chosenPort);
 					} else {
@@ -236,8 +247,10 @@ public abstract class RestServerEndpoint implements AutoCloseableAsync {
 
 			restAddressFuture.complete(restBaseUrl);
 
+			// TODO 将状态置为启动状态
 			state = State.RUNNING;
 
+			// TODO 启动 WebMonitorLeaderElectionService 服务, 实际就是在zookeeper建立一个目录
 			startInternal();
 		}
 	}
@@ -416,6 +429,7 @@ public abstract class RestServerEndpoint implements AutoCloseableAsync {
 		for (final RestAPIVersion supportedVersion : specificationHandler.f0.getSupportedAPIVersions()) {
 			final String versionedHandlerURL = '/' + supportedVersion.getURLVersionPrefix() + handlerURL;
 			log.debug("Register handler {} under {}@{}.", specificationHandler.f1, specificationHandler.f0.getHttpMethod(), versionedHandlerURL);
+			// TODO 注册处理器
 			registerHandler(router, versionedHandlerURL, specificationHandler.f0.getHttpMethod(), specificationHandler.f1);
 			if (supportedVersion.isDefaultVersion()) {
 				// setup unversioned url for convenience and backwards compatibility

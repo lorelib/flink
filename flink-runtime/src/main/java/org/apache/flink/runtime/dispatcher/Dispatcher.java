@@ -196,6 +196,7 @@ public abstract class Dispatcher extends FencedRpcEndpoint<DispatcherId> impleme
 
 	private void startDispatcherServices() throws Exception {
 		try {
+			// TODO
 			submittedJobGraphStore.start(this);
 			leaderElectionService.start(this);
 

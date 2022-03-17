@@ -84,6 +84,12 @@ public abstract class AbstractDispatcherResourceManagerComponentFactory<T extend
 	@Nonnull
 	private final ResourceManagerFactory<?> resourceManagerFactory;
 
+	/**
+	 * TODO RestEndpointFactory 有2个子类: SessionRestEndpointFactory 和 JobRestEndpointFactory
+	 *  创建DispatcherResourceManagerComponentFactory时初始化， 实例为: {@link org.apache.flink.runtime.rest.SessionRestEndpointFactory}
+	 *  @see org.apache.flink.runtime.entrypoint.ClusterEntrypoint#runCluster
+	 *  @see org.apache.flink.runtime.entrypoint.ClusterEntrypoint#createDispatcherResourceManagerComponentFactory
+	 */
 	@Nonnull
 	private final RestEndpointFactory<U> restEndpointFactory;
 
@@ -123,6 +129,7 @@ public abstract class AbstractDispatcherResourceManagerComponentFactory<T extend
 			// TODO ResourceManager 主检索服务, zookeeper 节点目录: /dispatcher_lock
 			resourceManagerRetrievalService = highAvailabilityServices.getResourceManagerLeaderRetriever();
 
+			// TODO DispatcherGateway 主检索服务
 			final LeaderGatewayRetriever<DispatcherGateway> dispatcherGatewayRetriever = new RpcGatewayRetriever<>(
 				rpcService,
 				DispatcherGateway.class,
@@ -130,6 +137,7 @@ public abstract class AbstractDispatcherResourceManagerComponentFactory<T extend
 				10,
 				Time.milliseconds(50L));
 
+			// TODO ResourceManagerGateway 主检索服务
 			final LeaderGatewayRetriever<ResourceManagerGateway> resourceManagerGatewayRetriever = new RpcGatewayRetriever<>(
 				rpcService,
 				ResourceManagerGateway.class,
@@ -137,12 +145,15 @@ public abstract class AbstractDispatcherResourceManagerComponentFactory<T extend
 				10,
 				Time.milliseconds(50L));
 
+			// TODO 创建Rest服务线程池
 			final ExecutorService executor = WebMonitorEndpoint.createExecutorService(
-				configuration.getInteger(RestOptions.SERVER_NUM_THREADS),
-				configuration.getInteger(RestOptions.SERVER_THREAD_PRIORITY),
+				configuration.getInteger(RestOptions.SERVER_NUM_THREADS), // rest.server.numThreads 默认 4
+				configuration.getInteger(RestOptions.SERVER_THREAD_PRIORITY), // Thread.NORM_PRIORITY 5
 				"DispatcherRestEndpoint");
 
+			// 10秒
 			final long updateInterval = configuration.getLong(MetricOptions.METRIC_FETCHER_UPDATE_INTERVAL);
+			// 创建监控收集器，用于收集jobmanager和taskmanager信息
 			final MetricFetcher metricFetcher = updateInterval == 0
 				? VoidMetricFetcher.INSTANCE
 				: MetricFetcherImpl.fromConfiguration(
@@ -151,6 +162,10 @@ public abstract class AbstractDispatcherResourceManagerComponentFactory<T extend
 					dispatcherGatewayRetriever,
 					executor);
 
+			/**
+			 * TODO 创建 WebMonitorEndpoint (实现类: session -> DispatcherRestEndpoint , job -> MiniDispatcherRestEndpoint),
+			 * 为web UI提供rest服务
+			 */
 			webMonitorEndpoint = restEndpointFactory.createRestEndpoint(
 				configuration,
 				dispatcherGatewayRetriever,
@@ -162,15 +177,18 @@ public abstract class AbstractDispatcherResourceManagerComponentFactory<T extend
 				fatalErrorHandler);
 
 			log.debug("Starting Dispatcher REST endpoint.");
+			// TODO 启动WEB服务
 			webMonitorEndpoint.start();
 
 			final String hostname = getHostname(rpcService);
 
+			// jobmanager监控组
 			jobManagerMetricGroup = MetricUtils.instantiateJobManagerMetricGroup(
 				metricRegistry,
 				hostname,
 				ConfigurationUtils.getSystemResourceMetricsProbingInterval(configuration));
 
+			// TODO 创建 ResourceManager
 			resourceManager = resourceManagerFactory.createResourceManager(
 				configuration,
 				ResourceID.generate(),
@@ -185,6 +203,7 @@ public abstract class AbstractDispatcherResourceManagerComponentFactory<T extend
 
 			final HistoryServerArchivist historyServerArchivist = HistoryServerArchivist.createHistoryServerArchivist(configuration, webMonitorEndpoint, ioExecutor);
 
+			// TODO 创建 Dispatcher
 			dispatcher = dispatcherFactory.createDispatcher(
 				configuration,
 				rpcService,
@@ -199,10 +218,18 @@ public abstract class AbstractDispatcherResourceManagerComponentFactory<T extend
 				historyServerArchivist);
 
 			log.debug("Starting ResourceManager.");
+			/**
+			 * TODO
+			 * @see ResourceManager#onStart()
+			 */
 			resourceManager.start();
 			resourceManagerRetrievalService.start(resourceManagerGatewayRetriever);
 
 			log.debug("Starting Dispatcher.");
+			/**
+			 * TODO
+			 * @see Dispatcher#onStart
+			 */
 			dispatcher.start();
 			dispatcherLeaderRetrievalService.start(dispatcherGatewayRetriever);
 

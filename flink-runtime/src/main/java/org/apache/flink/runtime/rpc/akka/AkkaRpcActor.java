@@ -103,6 +103,10 @@ class AkkaRpcActor<T extends RpcEndpoint & RpcGateway> extends AbstractActor {
 	@Nonnull
 	private State state;
 
+	/**
+	 * TODO 由 AkkaRpcService 触发构建
+	 * @see AkkaRpcService#startServer(RpcEndpoint)
+	 */
 	AkkaRpcActor(
 			final T rpcEndpoint,
 			final CompletableFuture<Boolean> terminationFuture,
@@ -119,6 +123,7 @@ class AkkaRpcActor<T extends RpcEndpoint & RpcGateway> extends AbstractActor {
 		this.rpcEndpointTerminationResult = RpcEndpointTerminationResult.failure(
 			new AkkaRpcException(
 				String.format("RpcEndpoint %s has not been properly stopped.", rpcEndpoint.getEndpointId())));
+		// TODO 重要 !!!! 由它最终触发 RpcEndpoint.onStart 方法调用
 		this.state = StoppedState.STOPPED;
 	}
 
@@ -137,6 +142,7 @@ class AkkaRpcActor<T extends RpcEndpoint & RpcGateway> extends AbstractActor {
 
 	@Override
 	public Receive createReceive() {
+		// TODO 消息接收器设置
 		return ReceiveBuilder.create()
 			.match(RemoteHandshakeMessage.class, this::handleHandshakeMessage)
 			.match(ControlMessages.class, this::handleControlMessage)
@@ -163,10 +169,18 @@ class AkkaRpcActor<T extends RpcEndpoint & RpcGateway> extends AbstractActor {
 		}
 	}
 
+	/**
+	 * TODO 消息处理
+	 * @param controlMessage
+	 */
 	private void handleControlMessage(ControlMessages controlMessage) {
 		try {
 			switch (controlMessage) {
 				case START:
+					/**
+					 * TODO 处理START消息
+					 * @see StoppedState#start(AkkaRpcActor)
+					 */
 					state = state.start(this);
 					break;
 				case STOP:
@@ -546,6 +560,7 @@ class AkkaRpcActor<T extends RpcEndpoint & RpcGateway> extends AbstractActor {
 			akkaRpcActor.mainThreadValidator.enterMainThread();
 
 			try {
+				// TODO 调用internalCallOnStart -> 调用各个 RpcEndpoint 子类的 onStart 方法   IMPORTANT !!!!
 				akkaRpcActor.rpcEndpoint.internalCallOnStart();
 			} catch (Throwable throwable) {
 				akkaRpcActor.stop(

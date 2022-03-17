@@ -74,6 +74,7 @@ public enum ClientUtils {
 			SupplierWithException<BlobClient, IOException> clientSupplier) throws FlinkException {
 		if (!userJars.isEmpty() || !userArtifacts.isEmpty()) {
 			try (BlobClient client = clientSupplier.get()) {
+				// TODO 上传文件
 				uploadAndSetUserJars(jobGraph, userJars, client);
 				uploadAndSetUserArtifacts(jobGraph, userArtifacts, client);
 			} catch (IOException ioe) {

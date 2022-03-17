@@ -196,6 +196,7 @@ public class AkkaRpcService implements RpcService {
 		CompletableFuture<Void> terminationFuture = new CompletableFuture<>();
 		final Props akkaRpcActorProps;
 
+		// TODO 创建actor
 		if (rpcEndpoint instanceof FencedRpcEndpoint) {
 			akkaRpcActorProps = Props.create(
 				FencedAkkaRpcActor.class,
@@ -261,7 +262,7 @@ public class AkkaRpcService implements RpcService {
 		}
 
 		// Rather than using the System ClassLoader directly, we derive the ClassLoader
-		// from this class . That works better in cases where Flink runs embedded and all Flink
+		// from this CLASS . That works better in cases where Flink runs embedded and all Flink
 		// code is loaded dynamically (for example from an OSGI bundle) through a custom ClassLoader
 		ClassLoader classLoader = getClass().getClassLoader();
 

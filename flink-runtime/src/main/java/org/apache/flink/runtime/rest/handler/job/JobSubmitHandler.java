@@ -53,6 +53,7 @@ import java.util.concurrent.Executor;
 import java.util.stream.Collectors;
 
 /**
+ * TODO 接收提交任务到flink集群
  * This handler can be used to submit jobs to a Flink cluster.
  */
 public final class JobSubmitHandler extends AbstractRestHandler<DispatcherGateway, JobSubmitRequestBody, JobSubmitResponseBody, EmptyMessageParameters> {
@@ -77,6 +78,7 @@ public final class JobSubmitHandler extends AbstractRestHandler<DispatcherGatewa
 
 	@Override
 	protected CompletableFuture<JobSubmitResponseBody> handleRequest(@Nonnull HandlerRequest<JobSubmitRequestBody, EmptyMessageParameters> request, @Nonnull DispatcherGateway gateway) throws RestHandlerException {
+		// 获取上传的文件
 		final Collection<File> uploadedFiles = request.getUploadedFiles();
 		final Map<String, Path> nameToFile = uploadedFiles.stream().collect(Collectors.toMap(
 			File::getName,
@@ -93,6 +95,7 @@ public final class JobSubmitHandler extends AbstractRestHandler<DispatcherGatewa
 			);
 		}
 
+		// 获取请求参数
 		final JobSubmitRequestBody requestBody = request.getRequestBody();
 
 		if (requestBody.jobGraphFileName == null) {
@@ -102,14 +105,19 @@ public final class JobSubmitHandler extends AbstractRestHandler<DispatcherGatewa
 				HttpResponseStatus.BAD_REQUEST);
 		}
 
+		// TODO 加载 JobGraph
 		CompletableFuture<JobGraph> jobGraphFuture = loadJobGraph(requestBody, nameToFile);
 
+		// TODO 获取所有的 Jar
 		Collection<Path> jarFiles = getJarFilesToUpload(requestBody.jarFileNames, nameToFile);
 
+		// TODO ?????
 		Collection<Tuple2<String, Path>> artifacts = getArtifactFilesToUpload(requestBody.artifactFileNames, nameToFile);
 
+		// TODO 上传JobGraph和jar
 		CompletableFuture<JobGraph> finalizedJobGraphFuture = uploadJobGraphFiles(gateway, jobGraphFuture, jarFiles, artifacts, configuration);
 
+		// TODO 提交JOB
 		CompletableFuture<Acknowledge> jobSubmissionFuture = finalizedJobGraphFuture.thenCompose(jobGraph -> gateway.submitJob(jobGraph, timeout));
 
 		return jobSubmissionFuture.thenCombine(jobGraphFuture,
@@ -164,6 +172,7 @@ public final class JobSubmitHandler extends AbstractRestHandler<DispatcherGatewa
 		return jobGraphFuture.thenCombine(blobServerPortFuture, (JobGraph jobGraph, Integer blobServerPort) -> {
 			final InetSocketAddress address = new InetSocketAddress(gateway.getHostname(), blobServerPort);
 			try {
+				// TODO 上传
 				ClientUtils.uploadJobGraphFiles(jobGraph, jarFiles, artifacts, () -> new BlobClient(address, configuration));
 			} catch (FlinkException e) {
 				throw new CompletionException(new RestHandlerException(

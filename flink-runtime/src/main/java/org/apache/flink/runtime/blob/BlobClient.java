@@ -57,6 +57,7 @@ import static org.apache.flink.util.Preconditions.checkArgument;
 import static org.apache.flink.util.Preconditions.checkNotNull;
 
 /**
+ * TODO BLOB客户端
  * The BLOB client can communicate with the BLOB server and either upload (PUT), download (GET),
  * or delete (DELETE) BLOBs.
  */

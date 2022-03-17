@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
+ * TODO 检索临时BLOBS对象，当它被检索时，就会被删除
  * A service to retrieve transient binary large objects (BLOBs) which are deleted on the
  * {@link BlobServer} when they are retrieved.
  *

@@ -86,6 +86,7 @@ public class DispatcherRestEndpoint extends WebMonitorEndpoint<DispatcherGateway
 
 		final Time timeout = restConfiguration.getTimeout();
 
+		// TODO job提交处理器
 		JobSubmitHandler jobSubmitHandler = new JobSubmitHandler(
 			leaderRetriever,
 			timeout,
@@ -95,6 +96,10 @@ public class DispatcherRestEndpoint extends WebMonitorEndpoint<DispatcherGateway
 
 		if (restConfiguration.isWebSubmitEnabled()) {
 			try {
+				/**
+				 * TODO 实例化 {@link org.apache.flink.runtime.webmonitor.WebSubmissionExtension}
+				 * 包含关于jar操作的各种handler
+				 */
 				webSubmissionExtension = WebMonitorUtils.loadWebSubmissionExtension(
 					leaderRetriever,
 					timeout,

@@ -664,6 +664,11 @@ public class WebMonitorEndpoint<T extends RestfulGateway> extends RestServerEndp
 
 	@Override
 	public void startInternal() throws Exception {
+		/**
+		 * leaderElectionService 在下面实例化的:
+		 * @see org.apache.flink.runtime.entrypoint.component.AbstractDispatcherResourceManagerComponentFactory#create
+		 * @see org.apache.flink.runtime.highavailability.zookeeper.ZooKeeperHaServices#getWebMonitorLeaderElectionService
+		 */
 		leaderElectionService.start(this);
 		if (hasWebUI) {
 			log.info("Web frontend listening at {}.", getRestBaseUrl());

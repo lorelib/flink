@@ -56,6 +56,7 @@ public class ResourceManagerRuntimeServices {
 			HighAvailabilityServices highAvailabilityServices,
 			ScheduledExecutor scheduledExecutor) throws Exception {
 
+		// TODO 创建 SlotManager , slot 实际由它管理
 		final SlotManager slotManager = createSlotManager(configuration, scheduledExecutor);
 
 		final JobLeaderIdService jobLeaderIdService = new JobLeaderIdService(
@@ -69,11 +70,15 @@ public class ResourceManagerRuntimeServices {
 	private static SlotManager createSlotManager(ResourceManagerRuntimeServicesConfiguration configuration, ScheduledExecutor scheduledExecutor) {
 		final SlotManagerConfiguration slotManagerConfiguration = configuration.getSlotManagerConfiguration();
 
+		// TODO slot 匹配策略
 		final SlotMatchingStrategy slotMatchingStrategy;
 
+		// TODO 默认是 stantalone 模式下为 false
 		if (slotManagerConfiguration.evenlySpreadOutSlots()) {
+			// TODO 选择资源使用最少的slot
 			slotMatchingStrategy = LeastUtilizationSlotMatchingStrategy.INSTANCE;
 		} else {
+			// TODO 选择第一个匹配到的slot
 			slotMatchingStrategy = AnyMatchingSlotMatchingStrategy.INSTANCE;
 		}
 

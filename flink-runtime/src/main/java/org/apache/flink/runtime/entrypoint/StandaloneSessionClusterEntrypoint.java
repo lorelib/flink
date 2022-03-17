@@ -66,6 +66,7 @@ public class StandaloneSessionClusterEntrypoint extends SessionClusterEntrypoint
 
 		StandaloneSessionClusterEntrypoint entrypoint = new StandaloneSessionClusterEntrypoint(configuration);
 
+		// TODO 启动jobmanager
 		ClusterEntrypoint.runClusterEntrypoint(entrypoint);
 	}
 }

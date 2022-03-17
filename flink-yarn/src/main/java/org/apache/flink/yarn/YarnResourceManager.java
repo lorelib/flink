@@ -253,20 +253,6 @@ public class YarnResourceManager extends ResourceManager<YarnWorkerNode> impleme
 	}
 
 	@Override
-	protected void initialize() throws ResourceManagerException {
-		try {
-			resourceManagerClient = createAndStartResourceManagerClient(
-				yarnConfig,
-				yarnHeartbeatIntervalMillis,
-				webInterfaceUrl);
-		} catch (Exception e) {
-			throw new ResourceManagerException("Could not start resource manager client.", e);
-		}
-
-		nodeManagerClient = createAndStartNodeManagerClient(yarnConfig);
-	}
-
-	@Override
 	public CompletableFuture<Void> onStop() {
 		// shut down all components
 		Throwable firstException = null;
@@ -294,6 +280,20 @@ public class YarnResourceManager extends ResourceManager<YarnWorkerNode> impleme
 		} else {
 			return terminationFuture;
 		}
+	}
+
+	@Override
+	protected void initialize() throws ResourceManagerException {
+		try {
+			resourceManagerClient = createAndStartResourceManagerClient(
+				yarnConfig,
+				yarnHeartbeatIntervalMillis,
+				webInterfaceUrl);
+		} catch (Exception e) {
+			throw new ResourceManagerException("Could not start resource manager client.", e);
+		}
+
+		nodeManagerClient = createAndStartNodeManagerClient(yarnConfig);
 	}
 
 	@Override

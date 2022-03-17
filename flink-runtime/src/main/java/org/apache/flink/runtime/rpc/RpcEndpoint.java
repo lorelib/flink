@@ -126,6 +126,7 @@ public abstract class RpcEndpoint implements RpcGateway, AutoCloseableAsync {
 		this.rpcService = checkNotNull(rpcService, "rpcService");
 		this.endpointId = checkNotNull(endpointId, "endpointId");
 
+		// TODO 启动rpc服务，此处对 RpcEndpoint.onStart 方法调用起到重要作用 ！！！
 		this.rpcServer = rpcService.startServer(this);
 
 		this.mainThreadExecutor = new MainThreadExecutor(rpcServer, this::validateRunsInMainThread);
@@ -181,6 +182,7 @@ public abstract class RpcEndpoint implements RpcGateway, AutoCloseableAsync {
 	 */
 	public final void internalCallOnStart() throws Exception {
 		validateRunsInMainThread();
+		// TODO 将启动状态设置为 true
 		isRunning = true;
 		onStart();
 	}
@@ -196,6 +198,8 @@ public abstract class RpcEndpoint implements RpcGateway, AutoCloseableAsync {
 	 *
 	 * @throws Exception indicating that the rpc endpoint could not be started. If an exception occurs,
 	 * then the rpc endpoint will automatically terminate.
+	 *
+	 * TODO RpcEndpoint启动时就会被调用，该方法不能被用户直接调用
 	 */
 	protected void onStart() throws Exception {}
 
