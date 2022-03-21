@@ -198,16 +198,16 @@ class SupervisorActor extends AbstractActor {
         throw cause;
     }
 
+    public static String getActorName() {
+        return AkkaRpcServiceUtils.SUPERVISOR_NAME;
+    }
+
     public static ActorRef startSupervisorActor(
             ActorSystem actorSystem, Executor terminationFutureExecutor) {
         final Props supervisorProps =
                 Props.create(SupervisorActor.class, terminationFutureExecutor)
                         .withDispatcher("akka.actor.supervisor-dispatcher");
         return actorSystem.actorOf(supervisorProps, getActorName());
-    }
-
-    public static String getActorName() {
-        return AkkaRpcServiceUtils.SUPERVISOR_NAME;
     }
 
     public static StartAkkaRpcActorResponse startAkkaRpcActor(
