@@ -121,6 +121,7 @@ class AkkaRpcActor<T extends RpcEndpoint & RpcGateway> extends AbstractActor {
                                 String.format(
                                         "RpcEndpoint %s has not been properly stopped.",
                                         rpcEndpoint.getEndpointId())));
+        // TODO 设置了state
         this.state = StoppedState.STOPPED;
     }
 
@@ -176,6 +177,7 @@ class AkkaRpcActor<T extends RpcEndpoint & RpcGateway> extends AbstractActor {
 
     private void handleControlMessage(ControlMessages controlMessage) {
         try {
+            // TODO state 为 StoppedState.STOPPED ,在构造函数中定义
             switch (controlMessage) {
                 case START:
                     state = state.start(this);
@@ -597,6 +599,7 @@ class AkkaRpcActor<T extends RpcEndpoint & RpcGateway> extends AbstractActor {
             akkaRpcActor.mainThreadValidator.enterMainThread();
 
             try {
+                // TODO 启动 RpcEndpoint , 触发 onStart() 方法调用
                 akkaRpcActor.rpcEndpoint.internalCallOnStart();
             } catch (Throwable throwable) {
                 akkaRpcActor.stop(

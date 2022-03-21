@@ -124,8 +124,10 @@ public abstract class RpcEndpoint implements RpcGateway, AutoCloseableAsync {
         this.rpcService = checkNotNull(rpcService, "rpcService");
         this.endpointId = checkNotNull(endpointId, "endpointId");
 
+        // TODO 创建 RpcServer
         this.rpcServer = rpcService.startServer(this);
 
+        // TODO 创建 MainThreadExecutor
         this.mainThreadExecutor = new MainThreadExecutor(rpcServer, this::validateRunsInMainThread);
     }
 
@@ -166,6 +168,7 @@ public abstract class RpcEndpoint implements RpcGateway, AutoCloseableAsync {
      * endpoint is ready to process remote procedure calls.
      */
     public final void start() {
+        // TODO 启动 RpcServer
         rpcServer.start();
     }
 
@@ -177,6 +180,7 @@ public abstract class RpcEndpoint implements RpcGateway, AutoCloseableAsync {
      */
     public final void internalCallOnStart() throws Exception {
         validateRunsInMainThread();
+        // TODO 标识RpcEndpoint启动
         isRunning = true;
         onStart();
     }

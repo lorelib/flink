@@ -86,6 +86,8 @@ import static org.apache.flink.util.Preconditions.checkState;
 /**
  * Akka based {@link RpcService} implementation. The RPC service starts an Akka actor to receive RPC
  * invocations from a {@link RpcGateway}.
+ *
+ * TODO 负责启动 actor 去接收来自 RpcGateway 的RPC请求
  */
 @ThreadSafe
 public class AkkaRpcService implements RpcService {
@@ -143,6 +145,8 @@ public class AkkaRpcService implements RpcService {
 
         stopped = false;
 
+        // TODO 创建 SupervisorActor，此处是唯一一处调用startSupervisorActor地方，
+        //  由此推断一个AkkaRpcService中只有一个 SupervisorActor
         supervisor = startSupervisorActor();
     }
 
@@ -151,6 +155,7 @@ public class AkkaRpcService implements RpcService {
                 Executors.newSingleThreadExecutor(
                         new ExecutorThreadFactory(
                                 "AkkaRpcService-Supervisor-Termination-Future-Executor"));
+        // TODO 创建 SupervisorActor
         final ActorRef actorRef =
                 SupervisorActor.startSupervisorActor(actorSystem, terminationFutureExecutor);
 
@@ -223,8 +228,10 @@ public class AkkaRpcService implements RpcService {
     public <C extends RpcEndpoint & RpcGateway> RpcServer startServer(C rpcEndpoint) {
         checkNotNull(rpcEndpoint, "rpc endpoint");
 
+        // TODO 启动 AkkaRpcActor 并将其注册到 SupervisorActor
         final SupervisorActor.ActorRegistration actorRegistration =
                 registerAkkaRpcActor(rpcEndpoint);
+        // TODO 获取 AkkaRpcActor 的引用对象 ActorRef
         final ActorRef actorRef = actorRegistration.getActorRef();
         final CompletableFuture<Void> actorTerminationFuture =
                 actorRegistration.getTerminationFuture();
@@ -243,9 +250,12 @@ public class AkkaRpcService implements RpcService {
             hostname = host.get();
         }
 
+        // TODO 抽取 RpcEndpoint 实现的Gateway接口，如 ResourceManager -> ResourceManagerGateway
         Set<Class<?>> implementedRpcGateways =
                 new HashSet<>(RpcUtils.extractImplementedRpcGateways(rpcEndpoint.getClass()));
 
+        // TODO 此处表明 server 至少实现 RpcServer 和 AkkaBasedEndpoint 2个接口，
+        //  符合条件的有2个类: AkkaInvocationHandler 和 FencedAkkaInvocationHandler
         implementedRpcGateways.add(RpcServer.class);
         implementedRpcGateways.add(AkkaBasedEndpoint.class);
 
@@ -282,6 +292,7 @@ public class AkkaRpcService implements RpcService {
         // code is loaded dynamically (for example from an OSGI bundle) through a custom ClassLoader
         ClassLoader classLoader = getClass().getClassLoader();
 
+        // TODO 创建RpcServer !!!
         @SuppressWarnings("unchecked")
         RpcServer server =
                 (RpcServer)
@@ -298,6 +309,7 @@ public class AkkaRpcService implements RpcService {
             SupervisorActor.ActorRegistration registerAkkaRpcActor(C rpcEndpoint) {
         final Class<? extends AbstractActor> akkaRpcActorType;
 
+        // TODO 判断 RpcEndpoint 是否是Fenced，用来设置对应的 akkaRpcActorType
         if (rpcEndpoint instanceof FencedRpcEndpoint) {
             akkaRpcActorType = FencedAkkaRpcActor.class;
         } else {
@@ -307,9 +319,13 @@ public class AkkaRpcService implements RpcService {
         synchronized (lock) {
             checkState(!stopped, "RpcService is stopped");
 
+            // TODO 使用 SupervisorActor 启动 AkkaRpcActor
             final SupervisorActor.StartAkkaRpcActorResponse startAkkaRpcActorResponse =
                     SupervisorActor.startAkkaRpcActor(
                             supervisor.getActor(),
+                            /**
+                             * TODO 创建 {@link SupervisorActor.StartAkkaRpcActor.PropsFactory}
+                             */
                             actorTerminationFuture ->
                                     Props.create(
                                             akkaRpcActorType,

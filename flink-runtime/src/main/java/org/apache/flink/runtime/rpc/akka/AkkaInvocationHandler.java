@@ -75,6 +75,7 @@ class AkkaInvocationHandler implements InvocationHandler, AkkaBasedEndpoint, Rpc
     /** Hostname of the host, {@link #rpcEndpoint} is running on. */
     private final String hostname;
 
+    // TODO AkkaRpcActor 代表着RpcEndpoint
     private final ActorRef rpcEndpoint;
 
     // whether the actor ref is local and thus no message serialization is needed
@@ -130,6 +131,7 @@ class AkkaInvocationHandler implements InvocationHandler, AkkaBasedEndpoint, Rpc
                             + "fencing token. Please use RpcService#connect(RpcService, F, Time) with F being the fencing token to "
                             + "retrieve a properly FencedRpcGateway.");
         } else {
+            // 代理远程调用
             result = invokeRpc(method, args);
         }
 
@@ -180,6 +182,12 @@ class AkkaInvocationHandler implements InvocationHandler, AkkaBasedEndpoint, Rpc
 
     @Override
     public void start() {
+        // TODO rpcEndpoint 指 AkkaRpcActor，而AkkaRpcActor代表着RpcEndpoint
+        /**
+         * 发送的 ControlMessages 消息由
+         * @see AkkaRpcActor#createReceive 注册的处理器处理，最后调用
+         * @see AkkaRpcActor#handleControlMessage(ControlMessages) 处理
+         */
         rpcEndpoint.tell(ControlMessages.START, ActorRef.noSender());
     }
 
@@ -206,6 +214,7 @@ class AkkaInvocationHandler implements InvocationHandler, AkkaBasedEndpoint, Rpc
         Annotation[][] parameterAnnotations = method.getParameterAnnotations();
         Time futureTimeout = extractRpcTimeout(parameterAnnotations, args, timeout);
 
+        // TODO 创建Rpc调用信息
         final RpcInvocation rpcInvocation =
                 createRpcInvocationMessage(methodName, parameterTypes, args);
 
@@ -214,6 +223,7 @@ class AkkaInvocationHandler implements InvocationHandler, AkkaBasedEndpoint, Rpc
         final Object result;
 
         if (Objects.equals(returnType, Void.TYPE)) {
+            // TODO 无返回值调用 rpcEndpoint.tell
             tell(rpcInvocation);
 
             result = null;
@@ -226,6 +236,7 @@ class AkkaInvocationHandler implements InvocationHandler, AkkaBasedEndpoint, Rpc
             final Throwable callStackCapture = captureAskCallStack ? new Throwable() : null;
 
             // execute an asynchronous call
+            // TODO 有返回值调用 Patterns.ask
             final CompletableFuture<?> resultFuture = ask(rpcInvocation, futureTimeout);
 
             final CompletableFuture<Object> completableFuture = new CompletableFuture<>();

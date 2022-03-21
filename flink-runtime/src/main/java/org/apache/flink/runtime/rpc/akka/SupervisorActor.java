@@ -66,6 +66,11 @@ class SupervisorActor extends AbstractActor {
         this.registeredAkkaRpcActors = new HashMap<>();
     }
 
+    /**
+     * TODO 被 {@link akka.actor.AbstractActor} 的 receive 函数调用,
+     *  该函数用户设置接收行为
+     * @return
+     */
     @Override
     public Receive createReceive() {
         return receiveBuilder()
@@ -102,11 +107,17 @@ class SupervisorActor extends AbstractActor {
                 terminationFutureExecutor);
     }
 
+    // TODO 创建 AkkaRpcActor
     private void createStartAkkaRpcActorMessage(StartAkkaRpcActor startAkkaRpcActor) {
         final String endpointId = startAkkaRpcActor.getEndpointId();
+        // 登记 AkkaRpcActor
         final AkkaRpcActorRegistration akkaRpcActorRegistration =
                 new AkkaRpcActorRegistration(endpointId);
 
+        /**
+         * TODO 创建 AkkaRpcActor 的配置实例，具体设置
+         * @see AkkaRpcService#registerAkkaRpcActor
+         */
         final Props akkaRpcActorProps =
                 startAkkaRpcActor
                         .getPropsFactory()
@@ -118,8 +129,10 @@ class SupervisorActor extends AbstractActor {
                 endpointId);
 
         try {
+            // TODO 创建 AkkaRpcActor ！！！
             final ActorRef actorRef = getContext().actorOf(akkaRpcActorProps, endpointId);
 
+            // 注册actor
             registeredAkkaRpcActors.put(actorRef, akkaRpcActorRegistration);
 
             getSender()
@@ -185,10 +198,6 @@ class SupervisorActor extends AbstractActor {
         throw cause;
     }
 
-    public static String getActorName() {
-        return AkkaRpcServiceUtils.SUPERVISOR_NAME;
-    }
-
     public static ActorRef startSupervisorActor(
             ActorSystem actorSystem, Executor terminationFutureExecutor) {
         final Props supervisorProps =
@@ -197,10 +206,23 @@ class SupervisorActor extends AbstractActor {
         return actorSystem.actorOf(supervisorProps, getActorName());
     }
 
+    public static String getActorName() {
+        return AkkaRpcServiceUtils.SUPERVISOR_NAME;
+    }
+
     public static StartAkkaRpcActorResponse startAkkaRpcActor(
             ActorRef supervisor, StartAkkaRpcActor.PropsFactory propsFactory, String endpointId) {
+        // TODO Patterns.ask 底层是通过 ActorRef.internalAsk 发送消息，Patterns组合了 CompletionStage
+        //  此处超时时间为248天，为什么设置这么长 ??????
+        /**
+         * 由{@link akka.actor.AbstractActor} receive 函数接收到消息，调用
+         * @see SupervisorActor#createReceive 创建消息接收器，处理 StartAkkaRpcActor 消息，由
+         * @see SupervisorActor#createStartAkkaRpcActorMessage 创建 AkkaRpcActor
+         * 由SupervisorActor创建子Actor
+         */
         return Patterns.ask(
                         supervisor,
+                        // TODO 创建启动 AkkaRpcActor 消息，即创建 StartAkkaRpcActor 对象
                         createStartAkkaRpcActorMessage(propsFactory, endpointId),
                         RpcUtils.INF_DURATION)
                 .toCompletableFuture()

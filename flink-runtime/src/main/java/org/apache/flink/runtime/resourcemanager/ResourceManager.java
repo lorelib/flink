@@ -220,6 +220,7 @@ public abstract class ResourceManager<WorkerType extends ResourceIDRetrievable>
     @Override
     public void onStart() throws Exception {
         try {
+            // TODO 启动资源管理服务
             startResourceManagerServices();
         } catch (Throwable t) {
             final ResourceManagerException exception =
@@ -233,14 +234,19 @@ public abstract class ResourceManager<WorkerType extends ResourceIDRetrievable>
 
     private void startResourceManagerServices() throws Exception {
         try {
+            // TODO ResourceManager选主服务
             leaderElectionService =
                     highAvailabilityServices.getResourceManagerLeaderElectionService();
 
+            // TODO 初始化
             initialize();
 
+            // TODO 启动选主服务
             leaderElectionService.start(this);
+            // TODO 获取Job主节点Id服务
             jobLeaderIdService.start(new JobLeaderIdActionsImpl());
 
+            // TODO 注册TaskExecutor监控
             registerTaskExecutorMetrics();
         } catch (Exception e) {
             handleStartResourceManagerServicesException(e);
