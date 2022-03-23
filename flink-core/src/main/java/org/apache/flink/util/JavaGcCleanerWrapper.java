@@ -51,13 +51,16 @@ public enum JavaGcCleanerWrapper {
     private static final Class<?>[] JAVA9_WAIT_FOR_REFERENCE_PROCESSING_ARG_TYPES = {};
     private static final Object[] JAVA9_WAIT_FOR_REFERENCE_PROCESSING_ARGS = {};
 
+    // TODO 内存清理器提供者
     private static final Collection<CleanerProvider> CLEANER_PROVIDERS =
             Arrays.asList(createLegacyCleanerProvider(), createJava9CleanerProvider());
+    // TODO 清理器管理者
     private static final CleanerManager CLEANER_MANAGER = findGcCleanerManager();
 
     private static CleanerProvider createLegacyCleanerProvider() {
         String name = "Legacy (before Java 9) cleaner";
         ReflectionUtils reflectionUtils = new ReflectionUtils(name + " provider");
+        // TODO JDK9之前的清理器，sun.misc.Cleaner是JDK内部提供的用来释放非堆内存资源的API
         String cleanerClassName = "sun.misc.Cleaner";
 
         // Actual Legacy code under the hood:
@@ -288,6 +291,12 @@ public enum JavaGcCleanerWrapper {
             this.cleanMethod = cleanMethod;
         }
 
+        /**
+         * TODO
+         * @param owner ByteBuffer被清理对象
+         * @param cleanupOperation  内存清理逻辑
+         * @return
+         */
         private Runnable create(Object owner, Runnable cleanupOperation) {
             Object cleanable;
             try {

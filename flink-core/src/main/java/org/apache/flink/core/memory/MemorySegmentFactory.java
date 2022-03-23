@@ -37,6 +37,10 @@ import static org.apache.flink.util.Preconditions.checkArgument;
  * same type. That way, the runtime does not mix the various specializations of the {@link
  * MemorySegment}. Not mixing them has shown to be beneficial to method specialization by the JIT
  * and to overall performance.
+ *
+ * TODO MemorySegment 工厂类，实际只用于 HybridMemorySegment 创建，
+ *  用于创建堆内存和非堆内存的MemorySegment，
+ *  使用工厂模式控制类的创建，能够帮助JIT执行去虚化（de-virtualized）和内联（inlined）的性能优化。
  */
 @Internal
 public final class MemorySegmentFactory {
@@ -141,6 +145,8 @@ public final class MemorySegmentFactory {
     private static ByteBuffer allocateDirectMemory(int size) {
         //noinspection ErrorNotRethrown
         try {
+            // TODO 底层实现 new DirectByteBuffer(capacity)
+            // TODO DirectByteBuffer是受GC控制的，这段代码的执行会在堆外占用size的内存，Java堆内只会占用一个byteBuffer对象的指针引用的大小
             return ByteBuffer.allocateDirect(size);
         } catch (OutOfMemoryError outOfMemoryError) {
             // TODO: this error handling can be removed in future,
@@ -171,11 +177,17 @@ public final class MemorySegmentFactory {
      * @param owner The owner to associate with the off-heap unsafe memory segment.
      * @param gcCleanupAction A custom action to run upon calling GC cleaner.
      * @return A new memory segment, backed by off-heap unsafe memory.
+     *
+     * TODO 使用sun.misc.Unsafe的allocateMemory方法分配堆外内存。
+     *  注意，使用这种方式分配的内存不受 -XX:MaxDirectMemorySize 这个JVM参数的限制 !!!
      */
     public static MemorySegment allocateOffHeapUnsafeMemory(
             int size, Object owner, Runnable gcCleanupAction) {
+        // TODO 获取内存地址
         long address = MemoryUtils.allocateUnsafe(size);
+        // TODO 创建ByteBuffer
         ByteBuffer offHeapBuffer = MemoryUtils.wrapUnsafeMemoryWithByteBuffer(address, size);
+        // TODO 创建垃圾清理器
         MemoryUtils.createMemoryGcCleaner(offHeapBuffer, address, gcCleanupAction);
         return new HybridMemorySegment(offHeapBuffer, owner);
     }

@@ -61,6 +61,7 @@ public class MemoryManager {
 
     private static final Logger LOG = LoggerFactory.getLogger(MemoryManager.class);
     /** The default memory page size. Currently set to 32 KiBytes. */
+    // TODO 默认内存页大小 32MB
     public static final int DEFAULT_PAGE_SIZE = 32 * 1024;
 
     /** The minimal memory page size. Currently set to 4 KiBytes. */

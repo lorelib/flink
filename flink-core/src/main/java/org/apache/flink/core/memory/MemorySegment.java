@@ -92,6 +92,8 @@ import java.nio.ReadOnlyBufferException;
  * implementation. This is easy for the JIT to recognize through class hierarchy analysis, or by
  * identifying that the invocations are monomorphic (all go to the same concrete method
  * implementation). Under these conditions, the JIT can perfectly inline methods.
+ *
+ * TODO Flink最小内存分配单元
  */
 @Internal
 public abstract class MemorySegment {

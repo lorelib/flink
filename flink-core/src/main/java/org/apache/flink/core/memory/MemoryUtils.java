@@ -123,15 +123,18 @@ public class MemoryUtils {
      * @return action to run to release the unsafe memory manually
      */
     static Runnable createMemoryGcCleaner(Object owner, long address, Runnable customCleanup) {
+        // TODO
         return JavaGcCleanerWrapper.createCleaner(
                 owner,
                 () -> {
+                    // TODO 释放指定地址的内存
                     releaseUnsafe(address);
                     customCleanup.run();
                 });
     }
 
     private static void releaseUnsafe(long address) {
+        // TODO 释放内存
         UNSAFE.freeMemory(address);
     }
 
@@ -145,8 +148,12 @@ public class MemoryUtils {
     static ByteBuffer wrapUnsafeMemoryWithByteBuffer(long address, int size) {
         //noinspection OverlyBroadCatchBlock
         try {
+            // TODO 创建 DirectByteBuffer， 不受 java gc 管理 !!!
+            //  !!!重要 UNSAFE.allocateInstance Allocate an instance but do not run any constructor. Initializes the class if it has not yet been.
             ByteBuffer buffer = (ByteBuffer) UNSAFE.allocateInstance(DIRECT_BYTE_BUFFER_CLASS);
+            // TODO 设置 buffer -> java.nio.Buffer 的 address 属性值
             UNSAFE.putLong(buffer, BUFFER_ADDRESS_FIELD_OFFSET, address);
+            // TODO 设置 buffer -> java.nio.Buffer 的 capacity 属性值
             UNSAFE.putInt(buffer, BUFFER_CAPACITY_FIELD_OFFSET, size);
             buffer.clear();
             return buffer;
