@@ -299,6 +299,7 @@ public class TaskExecutor extends RpcEndpoint implements TaskExecutorGateway {
         this.ioExecutor = taskExecutorServices.getIOExecutor();
         this.resourceManagerLeaderRetriever = haServices.getResourceManagerLeaderRetriever();
 
+        // TODO 获取硬件信息， 物理内存、CPU Cores、Jvm堆内存、托管内存
         this.hardwareDescription =
                 HardwareDescription.extractFromSystem(taskExecutorServices.getManagedMemorySize());
 

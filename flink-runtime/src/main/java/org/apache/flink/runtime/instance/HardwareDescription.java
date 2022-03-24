@@ -150,8 +150,11 @@ public final class HardwareDescription implements Serializable {
     // --------------------------------------------------------------------------------------------
 
     public static HardwareDescription extractFromSystem(long managedMemory) {
+        // TODO 获取CPU核数
         final int numberOfCPUCores = Hardware.getNumberCPUCores();
+        // TODO 获取JVM堆内存大小
         final long sizeOfJvmHeap = Runtime.getRuntime().maxMemory();
+        // TODO 获取物理内存大小
         final long sizeOfPhysicalMemory = Hardware.getSizeOfPhysicalMemory();
 
         return new HardwareDescription(

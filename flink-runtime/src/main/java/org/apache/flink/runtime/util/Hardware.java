@@ -60,11 +60,15 @@ public class Hardware {
      *
      * @return the size of the physical memory in bytes or {@code -1}, if the size could not be
      *     determined.
+     *
+     * TODO 获取物理内存
      */
     public static long getSizeOfPhysicalMemory() {
         // first try if the JVM can directly tell us what the system memory is
-        // this works only on Oracle JVMs
+        // this works only on Oracle JVMs TODO 提示通过JVM获取系统内存只在Oracle JVMs里有效
         try {
+            // TODO OperatingSystemMXBean 注意是 com.sun.management 下的，可获取到物理内存大小
+            //  不是java.lang下面的，另外 sun 目录下的继承了 lang 目录下的
             Class<?> clazz = Class.forName("com.sun.management.OperatingSystemMXBean");
             Method method = clazz.getMethod("getTotalPhysicalMemorySize");
             OperatingSystemMXBean operatingSystemMXBean =
@@ -84,6 +88,7 @@ public class Hardware {
                     e);
         }
 
+        // TODO 当上述方式获取不了内存大小时，可再通过下面的方法获取
         // we now try the OS specific access paths
         switch (OperatingSystem.getCurrentOperatingSystem()) {
             case LINUX:
@@ -115,6 +120,7 @@ public class Hardware {
      *     determined
      */
     private static long getSizeOfPhysicalMemoryForLinux() {
+        // TODO 通过读取 /proc/meminfo 获取物理内存
         try (BufferedReader lineReader =
                 new BufferedReader(new FileReader(LINUX_MEMORY_INFO_PATH))) {
             String line;

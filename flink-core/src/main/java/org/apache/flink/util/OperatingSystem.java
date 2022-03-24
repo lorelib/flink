@@ -94,6 +94,7 @@ public enum OperatingSystem {
     }
 
     /** The enum constant for the operating system. */
+    // TODO 获取操作系统类型
     private static final OperatingSystem os = readOSFromSystemProperties();
 
     /**
@@ -104,6 +105,7 @@ public enum OperatingSystem {
      *     possible to determine.
      */
     private static OperatingSystem readOSFromSystemProperties() {
+        // TODO 通过系统属性 os.name 获取
         String osName = System.getProperty(OS_KEY);
 
         if (osName.startsWith(LINUX_OS_PREFIX)) {
