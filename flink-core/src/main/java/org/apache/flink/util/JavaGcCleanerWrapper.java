@@ -76,6 +76,7 @@ public enum JavaGcCleanerWrapper {
         //
         return new CleanerProvider(
                 name,
+                // TODO
                 new CleanerFactoryProvider(
                         name,
                         reflectionUtils,
@@ -85,6 +86,7 @@ public enum JavaGcCleanerWrapper {
                         "create", // static method of Cleaner class to create it
                         cleanerClassName, // Cleaner is Cleanable in this case
                         "clean"),
+                // TODO
                 new PendingCleanersRunnerProvider(
                         name,
                         "tryHandlePending",
@@ -213,6 +215,7 @@ public enum JavaGcCleanerWrapper {
         }
 
         private boolean tryRunPendingCleaners() throws InterruptedException {
+            // TODO 通过反射调用java.lang.ref.Reference.tryHandlePending
             return pendingCleanersRunner != null && pendingCleanersRunner.tryRunPendingCleaners();
         }
 

@@ -124,6 +124,7 @@ public class TaskManagerServicesConfiguration {
         this.taskExecutorResourceSpec = taskExecutorResourceSpec;
         this.classLoaderResolveOrder = classLoaderResolveOrder;
         this.alwaysParentFirstLoaderPatterns = alwaysParentFirstLoaderPatterns;
+        // TODO 默认 4 * CPU个数
         this.numIoThreads = numIoThreads;
 
         checkArgument(
@@ -279,6 +280,7 @@ public class TaskManagerServicesConfiguration {
         final String[] alwaysParentFirstLoaderPatterns =
                 CoreOptions.getParentFirstLoaderPatterns(configuration);
 
+        // TODO 默认 4 * CPU个数
         final int numIoThreads = ClusterEntrypointUtils.getPoolSize(configuration);
 
         return new TaskManagerServicesConfiguration(

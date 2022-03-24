@@ -473,6 +473,7 @@ public class TaskManagerRunner implements FatalErrorHandler {
 
         String externalAddress = rpcService.getAddress();
 
+        // TODO 创建 TaskExecutor 资源规格清单
         final TaskExecutorResourceSpec taskExecutorResourceSpec =
                 TaskExecutorResourceUtils.resourceSpecFromConfig(configuration);
 
@@ -491,11 +492,14 @@ public class TaskManagerRunner implements FatalErrorHandler {
                         resourceID,
                         taskManagerServicesConfiguration.getSystemResourceMetricsProbingInterval());
 
+        // TODO 创建 ioExecutor 线程池
         final ExecutorService ioExecutor =
                 Executors.newFixedThreadPool(
-                        taskManagerServicesConfiguration.getNumIoThreads(),
+                        taskManagerServicesConfiguration.getNumIoThreads(), // 默认是机器CPU个数的4倍
                         new ExecutorThreadFactory("flink-taskexecutor-io"));
 
+        // TODO 创建TaskExecutor服务容器对象，包括:
+        //  MemoryManager、IOManager、ShuffleEnvironment、TaskSlotTable、JobTable、BroadcastVariableManager、KvStateService等
         TaskManagerServices taskManagerServices =
                 TaskManagerServices.fromConfiguration(
                         taskManagerServicesConfiguration,

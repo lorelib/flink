@@ -70,6 +70,7 @@ public final class ClusterEntrypointUtils {
      * @return The legal io-executor pool size.
      */
     public static int getPoolSize(Configuration config) {
+        // TODO 默认poolSize = 4 * Hardware.getNumberCPUCores()
         final int poolSize =
                 config.getInteger(
                         ClusterOptions.CLUSTER_IO_EXECUTOR_POOL_SIZE,

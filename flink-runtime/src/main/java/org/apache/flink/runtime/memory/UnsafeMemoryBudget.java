@@ -101,7 +101,9 @@ class UnsafeMemoryBudget {
      */
     @SuppressWarnings({"OverlyComplexMethod", "JavadocReference", "NestedTryStatement"})
     void reserveMemory(long size, int maxSleeps) throws MemoryReservationException {
+        // TODO 尝试申请内存
         long availableOrReserved = tryReserveMemory(size);
+        // TODO 如果内存足够则直接返回
         // optimist!
         if (availableOrReserved >= size) {
             return;
@@ -182,17 +184,25 @@ class UnsafeMemoryBudget {
         }
     }
 
+    /**
+     * TODO 申请内存，如果内存资源足够，则返回申请的size大小，否则返回当前可用内存
+     * @param size
+     * @return
+     */
     private long tryReserveMemory(long size) {
         long currentAvailableMemorySize;
+        // TODO 获取可用内存，并与申请的内存大小比较
         while (size <= (currentAvailableMemorySize = availableMemorySize.get())) {
             if (availableMemorySize.compareAndSet(
                     currentAvailableMemorySize, currentAvailableMemorySize - size)) {
                 return size;
             }
         }
+        // TODO 返回当前可用内存大小
         return currentAvailableMemorySize;
     }
 
+    // TODO 释放内存
     void releaseMemory(@Nonnegative long size) {
         if (size == 0) {
             return;
@@ -206,6 +216,7 @@ class UnsafeMemoryBudget {
                     availableMemorySize.compareAndSet(
                             currentAvailableMemorySize, currentAvailableMemorySize + size);
         }
+        // TODO 释放失败抛出异常
         if (!released) {
             throw new IllegalStateException(
                     String.format(

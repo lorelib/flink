@@ -145,7 +145,7 @@ public final class MemorySegmentFactory {
     private static ByteBuffer allocateDirectMemory(int size) {
         //noinspection ErrorNotRethrown
         try {
-            // TODO 底层实现 new DirectByteBuffer(capacity)
+            // TODO 底层实现 new DirectByteBuffer(capacity), 受 -XX:MaxDirectMemorySize 控制
             // TODO DirectByteBuffer是受GC控制的，这段代码的执行会在堆外占用size的内存，Java堆内只会占用一个byteBuffer对象的指针引用的大小
             return ByteBuffer.allocateDirect(size);
         } catch (OutOfMemoryError outOfMemoryError) {

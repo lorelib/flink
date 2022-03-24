@@ -69,6 +69,7 @@ public class MemoryManager {
 
     // ------------------------------------------------------------------------
 
+    // TODO 已分配的 MemorySegment 集合
     /** Memory segments allocated per memory owner. */
     private final Map<Object, Set<MemorySegment>> allocatedSegments;
 
@@ -228,30 +229,39 @@ public class MemoryManager {
                 numberOfPages,
                 totalNumberOfPages);
 
+        // TODO 保留数组空间大小至少为 numberOfPages
         // reserve array space, if applicable
         if (target instanceof ArrayList) {
             ((ArrayList<MemorySegment>) target).ensureCapacity(numberOfPages);
         }
 
+        // TODO 设置申请内存大小
         long memoryToReserve = numberOfPages * pageSize;
         try {
+            // TODO 申请内存预算，申请不到则抛出异常
             memoryBudget.reserveMemory(memoryToReserve);
         } catch (MemoryReservationException e) {
             throw new MemoryAllocationException(
                     String.format("Could not allocate %d pages", numberOfPages), e);
         }
 
+        // TODO 构建内存清理任务
         Runnable gcCleanup = memoryBudget.getReleaseMemoryAction(getPageSize());
+        // TODO 重新计算 owner 对应的已分配 MemorySegment
         allocatedSegments.compute(
                 owner,
                 (o, currentSegmentsForOwner) -> {
+                    // TODO numberOfPages 页数，也就是表明一个 MemorySegment 占有一页
                     Set<MemorySegment> segmentsForOwner =
                             currentSegmentsForOwner == null
                                     ? new HashSet<>(numberOfPages)
                                     : currentSegmentsForOwner;
+                    // TODO 给每页分配内存段
                     for (long i = numberOfPages; i > 0; i--) {
+                        // TODO 分配堆外内存，并设置了清理函数 !!!
                         MemorySegment segment =
                                 allocateOffHeapUnsafeMemory(getPageSize(), owner, gcCleanup);
+                        // TODO
                         target.add(segment);
                         segmentsForOwner.add(segment);
                     }
@@ -687,6 +697,7 @@ public class MemoryManager {
      * @param pageSize The size of the pages handed out by the memory manager.
      */
     public static MemoryManager create(long memorySize, int pageSize) {
+        // TODO 创建托管内存，并设置最长GC等待时间为大约2分钟
         return new MemoryManager(memorySize, pageSize, UnsafeMemoryBudget.MAX_SLEEPS_VERIFY_EMPTY);
     }
 }

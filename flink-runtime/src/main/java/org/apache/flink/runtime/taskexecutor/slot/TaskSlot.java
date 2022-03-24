@@ -103,11 +103,13 @@ public class TaskSlot<T extends TaskSlotPayload> implements AutoCloseableAsync {
         this.asyncExecutor = Preconditions.checkNotNull(asyncExecutor);
 
         this.tasks = new HashMap<>(4);
+        // TODO 更新状态为已分配
         this.state = TaskSlotState.ALLOCATED;
 
         this.jobId = jobId;
         this.allocationId = allocationId;
 
+        // TODO 创建托管内存
         this.memoryManager = createMemoryManager(resourceProfile, memoryPageSize);
 
         this.closingFuture = new CompletableFuture<>();

@@ -57,6 +57,9 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
  * Container for {@link TaskExecutor} services such as the {@link MemoryManager}, {@link IOManager},
  * {@link ShuffleEnvironment}. All services are exclusive to a single {@link TaskExecutor}.
  * Consequently, the respective {@link TaskExecutor} is responsible for closing them.
+ *
+ * TODO TaskExecutor 服务容器，包含比如: MemoryManager、IOManager、ShuffleEnvironment。
+ *  每个 TaskExecutor 拥有独自的 TaskManagerServices
  */
 public class TaskManagerServices {
     private static final Logger LOG = LoggerFactory.getLogger(TaskManagerServices.class);
@@ -293,6 +296,7 @@ public class TaskManagerServices {
 
         final BroadcastVariableManager broadcastVariableManager = new BroadcastVariableManager();
 
+        // TODO 创建 TaskSlotTable
         final TaskSlotTable<Task> taskSlotTable =
                 createTaskSlotTable(
                         taskManagerServicesConfiguration.getNumberOfSlots(),
@@ -353,6 +357,9 @@ public class TaskManagerServices {
                 libraryCacheManager);
     }
 
+    /**
+     * TODO memoryVerificationExecutor 即上文的 ioExecutor
+     */
     private static TaskSlotTable<Task> createTaskSlotTable(
             final int numberOfSlots,
             final TaskExecutorResourceSpec taskExecutorResourceSpec,
@@ -361,6 +368,7 @@ public class TaskManagerServices {
             final Executor memoryVerificationExecutor) {
         final TimerService<AllocationID> timerService =
                 new TimerService<>(new ScheduledThreadPoolExecutor(1), timerServiceShutdownTimeout);
+        // TODO 创建 TaskSlotTable
         return new TaskSlotTableImpl<>(
                 numberOfSlots,
                 TaskExecutorResourceUtils.generateTotalAvailableResourceProfile(

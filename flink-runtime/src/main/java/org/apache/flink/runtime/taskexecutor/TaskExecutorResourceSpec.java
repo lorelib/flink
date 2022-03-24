@@ -24,6 +24,8 @@ import org.apache.flink.configuration.MemorySize;
 /**
  * Specification of resources to use in running {@link
  * org.apache.flink.runtime.taskexecutor.TaskExecutor}.
+ *
+ * TODO TaskExecutor 资源规格清单
  */
 public class TaskExecutorResourceSpec {
     private final CPUResource cpuCores;

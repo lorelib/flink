@@ -100,6 +100,8 @@ public class TaskExecutorResourceUtils {
         }
     }
 
+    // TODO 构建 Slot 资源概要对象，按照 numberOfSlots 切分 TaskExecutor 可用资源
+    //  RoundingMode.DOWN 向下取整
     static ResourceProfile generateDefaultSlotResourceProfile(
             TaskExecutorResourceSpec taskExecutorResourceSpec, int numberOfSlots) {
         return ResourceProfile.newBuilder()
@@ -114,6 +116,7 @@ public class TaskExecutorResourceUtils {
                 .build();
     }
 
+    // TODO 构建 TaskExecutor 可用资源概要对象
     static ResourceProfile generateTotalAvailableResourceProfile(
             TaskExecutorResourceSpec taskExecutorResourceSpec) {
         return ResourceProfile.newBuilder()
