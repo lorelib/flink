@@ -128,6 +128,7 @@ public class NetworkBufferPool
         }
 
         try {
+            // TODO 申请内存 unpooled
             for (int i = 0; i < numberOfSegmentsToAllocate; i++) {
                 availableMemorySegments.add(
                         MemorySegmentFactory.allocateUnpooledOffHeapMemory(segmentSize, null));
