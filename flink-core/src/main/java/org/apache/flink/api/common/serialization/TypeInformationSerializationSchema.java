@@ -44,6 +44,7 @@ public class TypeInformationSerializationSchema<T>
     /** The type information, to be returned by {@link #getProducedType()}. */
     private final TypeInformation<T> typeInfo;
 
+    // TODO 隔离具体类型序列化与底层序列化
     /** The serializer for the actual de-/serialization. */
     private final TypeSerializer<T> serializer;
 
@@ -89,6 +90,7 @@ public class TypeInformationSerializationSchema<T>
         }
 
         try {
+            // TODO 使用TypeSerializer序列化数据
             return serializer.deserialize(dis);
         } catch (IOException e) {
             throw new RuntimeException("Unable to deserialize message", e);
@@ -120,6 +122,7 @@ public class TypeInformationSerializationSchema<T>
         }
 
         byte[] ret = dos.getCopyOfBuffer();
+        // TODO 清理dos
         dos.clear();
         return ret;
     }
