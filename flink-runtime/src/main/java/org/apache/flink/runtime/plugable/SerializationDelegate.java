@@ -26,6 +26,7 @@ import org.apache.flink.core.memory.DataOutputView;
 import java.io.IOException;
 
 /**
+ * TODO 将任意元素转化成 IOReadableWritable 对象，从而进行序列化
  * The serialization delegate exposes an arbitrary element as a {@link IOReadableWritable} for
  * serialization, with the help of a type serializer.
  *

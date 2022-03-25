@@ -106,9 +106,11 @@ public class RecordWriterOutput<OUT>
     }
 
     private <X> void pushToRecordWriter(StreamRecord<X> record) {
+        // TODO 将 StreamRecord 转化为 IOReadableWritable
         serializationDelegate.setInstance(record);
 
         try {
+            // TODO 通过 RecordWriter 将数据发送出去
             recordWriter.emit(serializationDelegate);
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage(), e);

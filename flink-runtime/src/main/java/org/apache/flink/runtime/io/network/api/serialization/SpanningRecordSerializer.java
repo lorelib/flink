@@ -44,10 +44,12 @@ public class SpanningRecordSerializer<T extends IOReadableWritable> implements R
     private ByteBuffer dataBuffer;
 
     public SpanningRecordSerializer() {
+        // TODO 实例化底层序列化器，并设置序列化器里的字节数组大小为128字节  ???为什么是128
         serializationBuffer = new DataOutputSerializer(128);
 
         // ensure initial state with hasRemaining false (for correct
         // continueWritingWithNextBufferBuilder logic)
+        // TODO 重置serializationBuffer wrapper(ByteBuffer)属性并返回
         dataBuffer = serializationBuffer.wrapAsByteBuffer();
     }
 
@@ -58,17 +60,22 @@ public class SpanningRecordSerializer<T extends IOReadableWritable> implements R
      */
     @Override
     public void serializeRecord(T record) throws IOException {
+        // 默认false
         if (CHECKED) {
+            // TODO 检查 dataBuffer 中数据是否发送完成，如果还没发送完成则抛出异常
             if (dataBuffer.hasRemaining()) {
                 throw new IllegalStateException("Pending serialization of previous record.");
             }
         }
 
+        // 将其position属性设置为0
         serializationBuffer.clear();
+        // TODO 预留4个字节空间，用于写入当前serializationBuffer的长度
         // the initial capacity of the serialization buffer should be no less than 4
         serializationBuffer.skipBytesToWrite(4);
 
         // write data and length
+        // TODO record -> SerializationDelegate（包装了StreamRecord）
         record.write(serializationBuffer);
 
         int len = serializationBuffer.length() - 4;

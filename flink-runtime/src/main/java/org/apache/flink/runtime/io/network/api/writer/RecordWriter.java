@@ -96,6 +96,7 @@ public abstract class RecordWriter<T extends IOReadableWritable> implements Avai
         this.targetPartition = writer;
         this.numberOfChannels = writer.getNumberOfSubpartitions();
 
+        // TODO 初始化RecordSerializer序列化器
         this.serializer = new SpanningRecordSerializer<T>();
 
         checkArgument(timeout >= -1);
@@ -116,8 +117,10 @@ public abstract class RecordWriter<T extends IOReadableWritable> implements Avai
     protected void emit(T record, int targetChannel) throws IOException, InterruptedException {
         checkErroneous();
 
+        // TODO 序列化数据， record -> SerializationDelegate
         serializer.serializeRecord(record);
 
+        // TODO ????
         // Make sure we don't hold onto the large intermediate serialization buffer for too long
         if (copyFromSerializerToTargetChannel(targetChannel)) {
             serializer.prune();

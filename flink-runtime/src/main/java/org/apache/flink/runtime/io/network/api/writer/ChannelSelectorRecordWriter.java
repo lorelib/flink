@@ -58,6 +58,7 @@ public final class ChannelSelectorRecordWriter<T extends IOReadableWritable>
 
     @Override
     public void emit(T record) throws IOException, InterruptedException {
+        // TODO 获取ChannelSelector，然后发送数据 record -> SerializationDelegate
         emit(record, channelSelector.selectChannel(record));
     }
 
