@@ -73,6 +73,8 @@ import static org.apache.flink.util.Preconditions.checkNotNull;
 /**
  * Class representing the streaming topology. It contains all the information necessary to build the
  * jobgraph for the execution.
+ *
+ * TODO 数据流拓扑图
  */
 @Internal
 public class StreamGraph implements Pipeline {

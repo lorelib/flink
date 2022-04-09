@@ -26,6 +26,8 @@ import org.apache.flink.streaming.runtime.partitioner.RescalePartitioner;
 /**
  * This mode decides the default {@link ResultPartitionType} of job edges. Note that this only
  * affects job edges which are {@link ShuffleMode#UNDEFINED}.
+ *
+ * TODO 全局数据交换模式
  */
 public enum GlobalDataExchangeMode {
     /** Set all job edges to be {@link ResultPartitionType#BLOCKING}. */

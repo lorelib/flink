@@ -749,6 +749,8 @@ public class DataStream<T> {
      * org.apache.flink.streaming.api.environment.StreamExecutionEnvironment#setStreamTimeCharacteristic(org.apache.flink.streaming.api.TimeCharacteristic)}
      *
      * @param size The size of the window.
+     *
+     * TODO 窗口函数
      */
     public AllWindowedStream<T, TimeWindow> timeWindowAll(Time size) {
         if (environment.getStreamTimeCharacteristic() == TimeCharacteristic.ProcessingTime) {
@@ -770,6 +772,8 @@ public class DataStream<T> {
      * the same operator instance.
      *
      * @param size The size of the window.
+     *
+     * TODO 窗口函数
      */
     public AllWindowedStream<T, TimeWindow> timeWindowAll(Time size, Time slide) {
         if (environment.getStreamTimeCharacteristic() == TimeCharacteristic.ProcessingTime) {
@@ -786,6 +790,8 @@ public class DataStream<T> {
      * the same operator instance.
      *
      * @param size The size of the windows in number of elements.
+     *
+     * TODO 窗口函数
      */
     public AllWindowedStream<T, GlobalWindow> countWindowAll(long size) {
         return windowAll(GlobalWindows.create()).trigger(PurgingTrigger.of(CountTrigger.of(size)));
@@ -799,6 +805,8 @@ public class DataStream<T> {
      *
      * @param size The size of the windows in number of elements.
      * @param slide The slide interval in number of elements.
+     *
+     * TODO 窗口函数
      */
     public AllWindowedStream<T, GlobalWindow> countWindowAll(long size, long slide) {
         return windowAll(GlobalWindows.create())
@@ -821,6 +829,8 @@ public class DataStream<T> {
      *
      * @param assigner The {@code WindowAssigner} that assigns elements to windows.
      * @return The trigger windows data stream.
+     *
+     * TODO 窗口函数
      */
     @PublicEvolving
     public <W extends Window> AllWindowedStream<T, W> windowAll(

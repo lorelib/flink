@@ -32,6 +32,8 @@ import java.util.concurrent.RunnableFuture;
  *
  * @param <S> type of the returned state object that represents the result of the snapshot
  *     operation.
+ *
+ * TODO 快照策略，用于状态存储中不同快照方式的接口
  */
 @Internal
 public interface SnapshotStrategy<S extends StateObject> {

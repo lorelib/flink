@@ -162,6 +162,7 @@ public class StreamExecutionEnvironment {
     private StateBackend defaultStateBackend;
 
     /** The time characteristic used by the data streams. */
+    // TODO 默认是按处理时间处理数据
     private TimeCharacteristic timeCharacteristic = DEFAULT_TIME_CHARACTERISTIC;
 
     protected final List<Tuple2<String, DistributedCache.DistributedCacheEntry>> cacheFile =
@@ -753,6 +754,7 @@ public class StreamExecutionEnvironment {
         configuration
                 .getOptional(StreamPipelineOptions.TIME_CHARACTERISTIC)
                 .ifPresent(this::setStreamTimeCharacteristic);
+        // TODO 加载StateBackend
         Optional.ofNullable(loadStateBackend(configuration, classLoader))
                 .ifPresent(this::setStateBackend);
         configuration
@@ -793,6 +795,7 @@ public class StreamExecutionEnvironment {
 
     private StateBackend loadStateBackend(ReadableConfig configuration, ClassLoader classLoader) {
         try {
+            // TODO 使用StateBackendLoader根据配置文件加载StateBackend
             return StateBackendLoader.loadStateBackendFromConfig(configuration, classLoader, null);
         } catch (DynamicCodeLoadingException | IOException e) {
             throw new WrappingRuntimeException(e);
@@ -1644,10 +1647,13 @@ public class StreamExecutionEnvironment {
      * @param jobName Desired name of the job
      * @return The result of the job execution, containing elapsed time and accumulators.
      * @throws Exception which occurs during job execution.
+     *
+     * TODO 触发程序执行
      */
     public JobExecutionResult execute(String jobName) throws Exception {
         Preconditions.checkNotNull(jobName, "Streaming Job name should not be null.");
 
+        // TODO 执行Job，并生成StreamGraph
         return execute(getStreamGraph(jobName));
     }
 
@@ -1662,6 +1668,7 @@ public class StreamExecutionEnvironment {
      */
     @Internal
     public JobExecutionResult execute(StreamGraph streamGraph) throws Exception {
+        // TODO 异步执行StreamGraph
         final JobClient jobClient = executeAsync(streamGraph);
 
         try {
@@ -1760,6 +1767,7 @@ public class StreamExecutionEnvironment {
                 configuration.get(DeploymentOptions.TARGET),
                 "No execution.target specified in your configuration file.");
 
+        // TODO 执行器工厂
         final PipelineExecutorFactory executorFactory =
                 executorServiceLoader.getExecutorFactory(configuration);
 
@@ -1768,6 +1776,7 @@ public class StreamExecutionEnvironment {
                 "Cannot find compatible factory for specified execution.target (=%s)",
                 configuration.get(DeploymentOptions.TARGET));
 
+        // TODO 获取执行器并执行StreamGraph
         CompletableFuture<JobClient> jobClientFuture =
                 executorFactory.getExecutor(configuration).execute(streamGraph, configuration);
 
@@ -1822,6 +1831,7 @@ public class StreamExecutionEnvironment {
      */
     @Internal
     public StreamGraph getStreamGraph(String jobName, boolean clearTransformations) {
+        // TODO 生成StreamGraph
         StreamGraph streamGraph = getStreamGraphGenerator().setJobName(jobName).generate();
         if (clearTransformations) {
             this.transformations.clear();
@@ -1834,6 +1844,7 @@ public class StreamExecutionEnvironment {
             throw new IllegalStateException(
                     "No operators defined in streaming topology. Cannot execute.");
         }
+        // TODO 实例化StreamGraph生成器
         return new StreamGraphGenerator(transformations, config, checkpointCfg)
                 .setStateBackend(defaultStateBackend)
                 .setChaining(isChainingEnabled)

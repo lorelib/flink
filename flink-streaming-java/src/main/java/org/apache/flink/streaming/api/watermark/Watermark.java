@@ -46,6 +46,7 @@ public final class Watermark extends StreamElement {
     // ------------------------------------------------------------------------
 
     /** The timestamp of the watermark in milliseconds. */
+    // TODO 只包含一个时间戳属性
     private final long timestamp;
 
     /** Creates a new watermark with the given timestamp in milliseconds. */

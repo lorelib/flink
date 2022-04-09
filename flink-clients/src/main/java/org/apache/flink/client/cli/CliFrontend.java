@@ -84,6 +84,7 @@ import static org.apache.flink.client.cli.CliFrontendParser.HELP_OPTION;
 import static org.apache.flink.util.Preconditions.checkNotNull;
 
 /** Implementation of a simple command line frontend for executing programs. */
+// TODO 命令行执行入口
 public class CliFrontend {
 
     private static final Logger LOG = LoggerFactory.getLogger(CliFrontend.class);
@@ -207,6 +208,7 @@ public class CliFrontend {
     protected void run(String[] args) throws Exception {
         LOG.info("Running 'run' command.");
 
+        // TODO 获取命令行参数
         final Options commandOptions = CliFrontendParser.getRunCommandOptions();
         final CommandLine commandLine = getCommandLine(commandOptions, args, true);
 
@@ -221,8 +223,10 @@ public class CliFrontend {
 
         final ProgramOptions programOptions = ProgramOptions.create(commandLine);
 
+        // TODO 获取一个可执行的程序包
         final PackagedProgram program = getPackagedProgram(programOptions);
 
+        // 获取job jar和依赖包
         final List<URL> jobJars = program.getJobJarAndDependencies();
         final Configuration effectiveConfiguration =
                 getEffectiveConfiguration(activeCommandLine, commandLine, programOptions, jobJars);
@@ -230,6 +234,7 @@ public class CliFrontend {
         LOG.debug("Effective executor configuration: {}", effectiveConfiguration);
 
         try {
+            // TODO 执行JOB
             executeProgram(effectiveConfiguration, program);
         } finally {
             program.close();
@@ -989,9 +994,11 @@ public class CliFrontend {
             // do action
             switch (action) {
                 case ACTION_RUN:
+                    // TODO 运行per-job和session模式
                     run(params);
                     return 0;
                 case ACTION_RUN_APPLICATION:
+                    // TODO 运行application模式
                     runApplication(params);
                     return 0;
                 case ACTION_LIST:
@@ -1052,20 +1059,25 @@ public class CliFrontend {
         EnvironmentInformation.logEnvironmentInfo(LOG, "Command Line Client", args);
 
         // 1. find the configuration directory
+        // TODO 1. 找到配置目录
         final String configurationDirectory = getConfigurationDirectoryFromEnv();
 
         // 2. load the global configuration
+        // TODO 2. 加载全局配置
         final Configuration configuration =
                 GlobalConfiguration.loadConfiguration(configurationDirectory);
 
         // 3. load the custom command lines
+        // TODO 3. 加载命令行中用户自定义命令
         final List<CustomCommandLine> customCommandLines =
                 loadCustomCommandLines(configuration, configurationDirectory);
 
         try {
+            // TODO 实例化CliFrontend
             final CliFrontend cli = new CliFrontend(configuration, customCommandLines);
 
             SecurityUtils.install(new SecurityConfiguration(cli.configuration));
+            // TODO 解析参数，并启动任务
             int retCode =
                     SecurityUtils.getInstalledContext().runSecured(() -> cli.parseParameters(args));
             System.exit(retCode);

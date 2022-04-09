@@ -105,6 +105,7 @@ public class AkkaOptions {
                                     + " security.ssl.enabled is set to true.");
 
     /** Maximum framesize of akka messages. */
+    // TODO JobManager和TaskManager直接通信，数据大小最大默认10MB
     public static final ConfigOption<String> FRAMESIZE =
             ConfigOptions.key("akka.framesize")
                     .stringType()

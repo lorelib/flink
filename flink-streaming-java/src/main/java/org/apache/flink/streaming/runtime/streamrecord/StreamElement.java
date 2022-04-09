@@ -23,6 +23,7 @@ import org.apache.flink.streaming.api.watermark.Watermark;
 import org.apache.flink.streaming.runtime.streamstatus.StreamStatus;
 
 /** An element in a data stream. Can be a record or a Watermark. */
+// TODO 数据流中的一个元素，可能是一条记录或者一个水印
 @Internal
 public abstract class StreamElement {
 

@@ -89,6 +89,9 @@ public final class KeyGroupRangeAssignment {
      *     maxParallelism.
      * @param operatorIndex Id of a key-group. 0 <= keyGroupID < maxParallelism.
      * @return the computed key-group range for the operator.
+     *
+     * TODO 计算 KeyGroupRange 算法，使用最大并行度、当前并行度、keyGroupId进行计算，
+     *  operatorIndex 大于0小于最大并行度
      */
     public static KeyGroupRange computeKeyGroupRangeForOperatorIndex(
             int maxParallelism, int parallelism, int operatorIndex) {
@@ -100,6 +103,7 @@ public final class KeyGroupRangeAssignment {
                 maxParallelism >= parallelism,
                 "Maximum parallelism must not be smaller than parallelism.");
 
+        // TODO 计算区间算法
         int start = ((operatorIndex * maxParallelism + parallelism - 1) / parallelism);
         int end = ((operatorIndex + 1) * maxParallelism - 1) / parallelism;
         return new KeyGroupRange(start, end);

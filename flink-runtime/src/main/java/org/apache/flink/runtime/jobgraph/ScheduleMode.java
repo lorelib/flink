@@ -19,6 +19,7 @@
 package org.apache.flink.runtime.jobgraph;
 
 /** The ScheduleMode decides how tasks of an execution graph are started. */
+// TODO 调度模型ScheduleMode决定着一个任务的执行graph如何开始
 public enum ScheduleMode {
     /**
      * Schedule tasks lazily from the sources. Downstream tasks are started once their input data

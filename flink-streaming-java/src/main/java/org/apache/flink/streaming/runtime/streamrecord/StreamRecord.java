@@ -23,6 +23,8 @@ import org.apache.flink.annotation.Internal;
  * One value in a data stream. This stores the value and an optional associated timestamp.
  *
  * @param <T> The type encapsulated with the stream record.
+ *
+ * TODO 代表数据流中一条数据，包含了值和时间戳
  */
 @Internal
 public final class StreamRecord<T> extends StreamElement {

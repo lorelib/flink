@@ -175,6 +175,7 @@ public class WindowOperator<K, IN, ACC, OUT, W extends Window>
     // State that needs to be checkpointed
     // ------------------------------------------------------------------------
 
+    // TODO 定时器服务
     protected transient InternalTimerService<W> internalTimerService;
 
     /** Creates a new {@code WindowOperator} based on the given policies and user functions. */
@@ -224,6 +225,7 @@ public class WindowOperator<K, IN, ACC, OUT, W extends Window>
         this.numLateRecordsDropped = metrics.counter(LATE_ELEMENTS_DROPPED_METRIC_NAME);
         timestampedCollector = new TimestampedCollector<>(output);
 
+        // TODO 初始化定时器服务
         internalTimerService = getInternalTimerService("window-timers", windowSerializer, this);
 
         triggerContext = new Context(null, null);

@@ -112,6 +112,7 @@ public enum ClientUtils {
         }
     }
 
+    // TODO 执行程序
     public static void executeProgram(
             PipelineExecutorServiceLoader executorServiceLoader,
             Configuration configuration,
@@ -144,6 +145,7 @@ public enum ClientUtils {
                     suppressSysout);
 
             try {
+                // TODO 交互式执行
                 program.invokeInteractiveModeForExecution();
             } finally {
                 ContextEnvironment.unsetAsContext();

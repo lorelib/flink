@@ -60,6 +60,8 @@ import static org.apache.flink.util.Preconditions.checkNotNull;
 /**
  * This class encapsulates represents a program, packaged in a jar file. It supplies functionality
  * to extract nested libraries, search for the program entry point, and extract a program plan.
+ *
+ * TODO 代表一个可执行程序
  */
 public class PackagedProgram implements AutoCloseable {
 
@@ -216,6 +218,7 @@ public class PackagedProgram implements AutoCloseable {
      * local execution by default.
      */
     public void invokeInteractiveModeForExecution() throws ProgramInvocationException {
+        // 调用job main方法
         callMainMethod(mainClass, args);
     }
 
@@ -293,6 +296,9 @@ public class PackagedProgram implements AutoCloseable {
         }
 
         try {
+            /**
+             * TODO 获取job main方法 {@link org.apache.flink.streaming.api.environment.StreamExecutionEnvironment}
+             */
             mainMethod = entryClass.getMethod("main", String[].class);
         } catch (NoSuchMethodException e) {
             throw new ProgramInvocationException(
@@ -316,6 +322,7 @@ public class PackagedProgram implements AutoCloseable {
         }
 
         try {
+            // TODO 通过反射执行job main方法
             mainMethod.invoke(null, (Object) args);
         } catch (IllegalArgumentException e) {
             throw new ProgramInvocationException(

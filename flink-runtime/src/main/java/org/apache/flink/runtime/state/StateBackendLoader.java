@@ -91,6 +91,7 @@ public class StateBackendLoader {
         checkNotNull(config, "config");
         checkNotNull(classLoader, "classLoader");
 
+        // TODO StateBackend没有默认值
         final String backendName = config.get(CheckpointingOptions.STATE_BACKEND);
         if (backendName == null) {
             return null;
@@ -99,6 +100,7 @@ public class StateBackendLoader {
         // by default the factory class is the backend name
         String factoryClassName = backendName;
 
+        // TODO 根据配置创建对应的StateBackend
         switch (backendName.toLowerCase()) {
             case MEMORY_STATE_BACKEND_NAME:
                 MemoryStateBackend memBackend =
@@ -117,6 +119,7 @@ public class StateBackendLoader {
                 return memBackend;
 
             case FS_STATE_BACKEND_NAME:
+                // TODO 创建FsStateBackend
                 FsStateBackend fsBackend =
                         new FsStateBackendFactory().createFromConfig(config, classLoader);
                 if (logger != null) {
@@ -127,6 +130,7 @@ public class StateBackendLoader {
                 return fsBackend;
 
             case ROCKSDB_STATE_BACKEND_NAME:
+                // TODO 进入default case创建RocksDBStateBackend
                 factoryClassName =
                         "org.apache.flink.contrib.streaming.state.RocksDBStateBackendFactory";
                 // fall through to the 'default' case that uses reflection to load the backend

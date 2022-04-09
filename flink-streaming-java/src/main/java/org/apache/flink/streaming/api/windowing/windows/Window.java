@@ -26,11 +26,16 @@ import org.apache.flink.annotation.PublicEvolving;
  *
  * <p>Subclasses should implement {@code equals()} and {@code hashCode()} so that logically same
  * windows are treated the same.
+ *
+ * TODO
+ *  Window是把一组元素放进一个有限的桶里，子类需要实现equals和hashCode方法，这样flink就会把逻辑上一样的window做同样的处理
+ *  finite [ˈfaɪnaɪt] 有限的，有限制的；限定的
  */
 @PublicEvolving
 public abstract class Window {
 
     /**
+     * TODO 获取最后一个属于该窗口的时间戳
      * Gets the largest timestamp that still belongs to this window.
      *
      * @return The largest timestamp that still belongs to this window.

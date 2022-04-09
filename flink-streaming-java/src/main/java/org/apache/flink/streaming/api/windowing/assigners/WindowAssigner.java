@@ -39,6 +39,9 @@ import java.util.Collection;
  *
  * @param <T> The type of elements that this WindowAssigner can assign windows to.
  * @param <W> The type of {@code Window} that this assigner assigns.
+ *
+ * TODO 为一个元素分配0或者多个window，滑动窗口会存在一个元素对应多个window
+ *  window窗口，窗户； pane 窗玻璃，窗格
  */
 @PublicEvolving
 public abstract class WindowAssigner<T, W extends Window> implements Serializable {

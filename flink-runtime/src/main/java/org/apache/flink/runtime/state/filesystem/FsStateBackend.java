@@ -336,8 +336,8 @@ public class FsStateBackend extends AbstractFileStateBackend implements Configur
     public FsStateBackend(
             URI checkpointDirectory,
             @Nullable URI defaultSavepointDirectory,
-            int fileStateSizeThreshold,
-            int writeBufferSize,
+            int fileStateSizeThreshold, // 低于这个大小的state将会保存为元数据，而不会保存到文件
+            int writeBufferSize, // 用于序列化state状态的写缓冲大小
             TernaryBoolean asynchronousSnapshots) {
 
         super(

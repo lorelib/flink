@@ -42,7 +42,7 @@ public class GroupedProcessingTimeWindowExample {
     public static void main(String[] args) throws Exception {
 
         final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
-        env.setParallelism(4);
+        env.setParallelism(1);
 
         DataStream<Tuple2<Long, Long>> stream = env.addSource(new DataSource());
 

@@ -47,6 +47,7 @@ import java.util.Collections;
 public class TumblingEventTimeWindows extends WindowAssigner<Object, TimeWindow> {
     private static final long serialVersionUID = 1L;
 
+    // TODO 窗口大小，单位: 毫秒
     private final long size;
 
     private final long offset;
@@ -66,6 +67,7 @@ public class TumblingEventTimeWindows extends WindowAssigner<Object, TimeWindow>
             Object element, long timestamp, WindowAssignerContext context) {
         if (timestamp > Long.MIN_VALUE) {
             // Long.MIN_VALUE is currently assigned when no timestamp is present
+            // TODO 构建element的时间窗口
             long start = TimeWindow.getWindowStartWithOffset(timestamp, offset, size);
             return Collections.singletonList(new TimeWindow(start, start + size));
         } else {

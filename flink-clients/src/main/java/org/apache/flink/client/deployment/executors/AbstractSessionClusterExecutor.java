@@ -60,6 +60,7 @@ public class AbstractSessionClusterExecutor<
     public CompletableFuture<JobClient> execute(
             @Nonnull final Pipeline pipeline, @Nonnull final Configuration configuration)
             throws Exception {
+        // TODO StreamGraph转化为JobGraph
         final JobGraph jobGraph = PipelineExecutorUtils.getJobGraph(pipeline, configuration);
 
         try (final ClusterDescriptor<ClusterID> clusterDescriptor =
@@ -70,6 +71,7 @@ public class AbstractSessionClusterExecutor<
             final ClusterClientProvider<ClusterID> clusterClientProvider =
                     clusterDescriptor.retrieve(clusterID);
             ClusterClient<ClusterID> clusterClient = clusterClientProvider.getClusterClient();
+            // TODO 提交JOB
             return clusterClient
                     .submitJob(jobGraph)
                     .thenApplyAsync(

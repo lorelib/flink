@@ -201,14 +201,28 @@ public class StreamGraphGenerator {
         this.savepointRestoreSettings = savepointRestoreSettings;
     }
 
+    // TODO 生成StreamGraph
     public StreamGraph generate() {
         streamGraph = new StreamGraph(executionConfig, checkpointConfig, savepointRestoreSettings);
+        // TODO 设置StateBackend
         streamGraph.setStateBackend(stateBackend);
         streamGraph.setChaining(chaining);
+        /**
+         * TODO 设置调度模型，默认
+         * @see ScheduleMode.EAGER
+         */
         streamGraph.setScheduleMode(scheduleMode);
         streamGraph.setUserArtifacts(userArtifacts);
+        /**
+         * TODO 设置时间特性，默认是
+         * @see TimeCharacteristic.ProcessingTime
+         */
         streamGraph.setTimeCharacteristic(timeCharacteristic);
         streamGraph.setJobName(jobName);
+        /**
+         * TODO 数据交换模式，默认
+         * @see org.apache.flink.streaming.api.graph.GlobalDataExchangeMode.ALL_EDGES_PIPELINED
+         */
         streamGraph.setGlobalDataExchangeMode(globalDataExchangeMode);
 
         alreadyTransformed = new HashMap<>();

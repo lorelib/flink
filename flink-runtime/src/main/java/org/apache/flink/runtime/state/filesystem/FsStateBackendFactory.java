@@ -33,6 +33,7 @@ public class FsStateBackendFactory implements StateBackendFactory<FsStateBackend
             throws IllegalConfigurationException {
         // we need to explicitly read the checkpoint directory here, because that
         // is a required constructor parameter
+        // TODO 获取检查点目录
         final String checkpointDir = config.get(CheckpointingOptions.CHECKPOINTS_DIRECTORY);
         if (checkpointDir == null) {
             throw new IllegalConfigurationException(
@@ -43,6 +44,7 @@ public class FsStateBackendFactory implements StateBackendFactory<FsStateBackend
         }
 
         try {
+            // TODO 创建FsStateBackend
             return new FsStateBackend(checkpointDir).configure(config, classLoader);
         } catch (IllegalArgumentException e) {
             throw new IllegalConfigurationException(

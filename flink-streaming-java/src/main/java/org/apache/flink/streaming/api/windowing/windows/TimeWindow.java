@@ -67,6 +67,8 @@ public class TimeWindow extends Window {
      * first timestamp that does not belong to this window any more.
      *
      * @return The exclusive end timestamp of this window.
+     *
+     * TODO 不包含end, 包含start, 那么这是一个半开区间
      */
     public long getEnd() {
         return end;
@@ -260,6 +262,9 @@ public class TimeWindow extends Window {
      * @param offset The offset which window start would be shifted by.
      * @param windowSize The size of the generated windows.
      * @return window start
+     *
+     * TODO 获取窗口开始时间
+     *  timestamp是元素绑定的时间戳，比如事件时间或处理时间等
      */
     public static long getWindowStartWithOffset(long timestamp, long offset, long windowSize) {
         return timestamp - (timestamp - offset + windowSize) % windowSize;

@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 /** A client that is scoped to a specific job. */
+// TODO 特定JOB的一个客户端
 @PublicEvolving
 public interface JobClient {
 

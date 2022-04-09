@@ -632,6 +632,8 @@ public class KeyedStream<T, KEY> extends DataStream<T> {
      * org.apache.flink.streaming.api.environment.StreamExecutionEnvironment#setStreamTimeCharacteristic(org.apache.flink.streaming.api.TimeCharacteristic)}
      *
      * @param size The size of the window.
+     *
+     * TODO 窗口函数
      */
     public WindowedStream<T, KEY, TimeWindow> timeWindow(Time size) {
         if (environment.getStreamTimeCharacteristic() == TimeCharacteristic.ProcessingTime) {
@@ -650,6 +652,8 @@ public class KeyedStream<T, KEY> extends DataStream<T> {
      * org.apache.flink.streaming.api.environment.StreamExecutionEnvironment#setStreamTimeCharacteristic(org.apache.flink.streaming.api.TimeCharacteristic)}
      *
      * @param size The size of the window.
+     *
+     * TODO 窗口函数
      */
     public WindowedStream<T, KEY, TimeWindow> timeWindow(Time size, Time slide) {
         if (environment.getStreamTimeCharacteristic() == TimeCharacteristic.ProcessingTime) {
@@ -663,6 +667,8 @@ public class KeyedStream<T, KEY> extends DataStream<T> {
      * Windows this {@code KeyedStream} into tumbling count windows.
      *
      * @param size The size of the windows in number of elements.
+     *
+     * TODO 窗口函数
      */
     public WindowedStream<T, KEY, GlobalWindow> countWindow(long size) {
         return window(GlobalWindows.create()).trigger(PurgingTrigger.of(CountTrigger.of(size)));
@@ -673,6 +679,8 @@ public class KeyedStream<T, KEY> extends DataStream<T> {
      *
      * @param size The size of the windows in number of elements.
      * @param slide The slide interval in number of elements.
+     *
+     * TODO 窗口函数
      */
     public WindowedStream<T, KEY, GlobalWindow> countWindow(long size, long slide) {
         return window(GlobalWindows.create())

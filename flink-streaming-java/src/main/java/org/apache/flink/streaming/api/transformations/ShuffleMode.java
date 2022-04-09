@@ -21,6 +21,7 @@ package org.apache.flink.streaming.api.transformations;
 import org.apache.flink.annotation.PublicEvolving;
 
 /** The shuffle mode defines the data exchange mode between operators. */
+// TODO 定义着算子间的数据交换模式
 @PublicEvolving
 public enum ShuffleMode {
     /**
@@ -39,6 +40,7 @@ public enum ShuffleMode {
      * The shuffle mode is undefined. It leaves it up to the framework to decide the shuffle mode.
      * The framework will pick one of {@link ShuffleMode#BATCH} or {@link ShuffleMode#PIPELINED} in
      * the end.
+     * TODO 让框架决定shuffle模式
      */
     UNDEFINED
 }

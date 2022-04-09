@@ -51,6 +51,8 @@ import java.io.Serializable;
  *
  * @param <T> The type of elements on which this {@code Trigger} works.
  * @param <W> The type of {@link Window Windows} on which this {@code Trigger} can operate.
+ *
+ * TODO Trigger决定着一个窗口的窗格数据什么时候应该被计算和发送计算的结果
  */
 @PublicEvolving
 public abstract class Trigger<T, W extends Window> implements Serializable {
