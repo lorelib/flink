@@ -86,6 +86,8 @@ import static org.apache.flink.util.Preconditions.checkNotNull;
  * This class is the executable entry point for the task manager in yarn or standalone mode. It
  * constructs the related components (network, I/O manager, memory manager, RPC service, HA service)
  * and starts them.
+ *
+ * TODO 在yarn或standalone模式下启动TaskManager的入口
  */
 public class TaskManagerRunner implements FatalErrorHandler {
 
@@ -332,6 +334,7 @@ public class TaskManagerRunner implements FatalErrorHandler {
         SignalHandler.register(LOG);
         JvmShutdownSafeguard.installAsShutdownHook(LOG);
 
+        // 获取最大可打开的文件句柄数
         long maxOpenFileHandles = EnvironmentInformation.getOpenFileHandlesLimit();
 
         if (maxOpenFileHandles != -1L) {
@@ -340,6 +343,7 @@ public class TaskManagerRunner implements FatalErrorHandler {
             LOG.info("Cannot determine the maximum number of open file descriptors");
         }
 
+        // TODO 启动TaskManager
         runTaskManagerProcessSecurely(args, ResourceID.generate());
     }
 
@@ -354,12 +358,14 @@ public class TaskManagerRunner implements FatalErrorHandler {
         final TaskManagerRunner taskManagerRunner;
 
         try {
+            // TODO 初始化TaskManagerRunner
             taskManagerRunner =
                     new TaskManagerRunner(
                             configuration,
                             resourceId,
                             pluginManager,
                             TaskManagerRunner::createTaskExecutorService);
+            // TODO 真正开始启动TaskManager
             taskManagerRunner.start();
         } catch (Exception exception) {
             throw new FlinkException("Failed to start the TaskManagerRunner.", exception);
@@ -378,12 +384,14 @@ public class TaskManagerRunner implements FatalErrorHandler {
         Configuration configuration = null;
 
         try {
+            // TODO 加载配置
             configuration = loadConfiguration(args);
         } catch (FlinkParseException fpe) {
             LOG.error("Could not load the configuration.", fpe);
             System.exit(FAILURE_EXIT_CODE);
         }
 
+        // TODO 启动TaskManager
         runTaskManagerProcessSecurely(checkNotNull(configuration), resourceID);
     }
 
@@ -402,7 +410,7 @@ public class TaskManagerRunner implements FatalErrorHandler {
 
             exitCode =
                     SecurityUtils.getInstalledContext()
-                            .runSecured(
+                            .runSecured( // TODO 启动TaskManager
                                     () -> runTaskManager(configuration, resourceID, pluginManager));
         } catch (Throwable t) {
             throwable = ExceptionUtils.stripException(t, UndeclaredThrowableException.class);

@@ -78,6 +78,8 @@ import java.util.stream.Collectors;
  *
  * <p>The {@code ExecutionJobVertex} corresponds to a parallelized operation. It contains an {@link
  * ExecutionVertex} for each parallel instance of that operation.
+ *
+ * TODO 跟JobVertex是一一对应的
  */
 public class ExecutionJobVertex
         implements AccessExecutionJobVertex, Archiveable<ArchivedExecutionJobVertex> {
@@ -158,6 +160,7 @@ public class ExecutionJobVertex
         this.graph = graph;
         this.jobVertex = jobVertex;
 
+        // TODO 获取对应JobVertex的并行度
         int vertexParallelism = jobVertex.getParallelism();
         int numTaskVertices = vertexParallelism > 0 ? vertexParallelism : defaultParallelism;
 
@@ -183,8 +186,10 @@ public class ExecutionJobVertex
         this.resourceProfile =
                 ResourceProfile.fromResourceSpec(jobVertex.getMinResources(), MemorySize.ZERO);
 
+        // TODO 创建 ExecutionVertex 数组，数组大小等于 JobVertex 的并行度
         this.taskVertices = new ExecutionVertex[numTaskVertices];
 
+        // TODO 创建输入 IntermediateResult 数组，数组大小等于 JobVertex 的输入JobEdge列表大小
         this.inputs = new ArrayList<>(jobVertex.getInputs().size());
 
         // take the sharing group
@@ -198,9 +203,11 @@ public class ExecutionJobVertex
         }
 
         // create the intermediate results
+        // TODO 创建输出 IntermediateResult 数组，大小等于 JobVertex 输出 IntermediateDataSet 列表大小
         this.producedDataSets =
                 new IntermediateResult[jobVertex.getNumberOfProducedIntermediateDataSets()];
 
+        // TODO 实例化 IntermediateResult 数组
         for (int i = 0; i < jobVertex.getProducedDataSets().size(); i++) {
             final IntermediateDataSet result = jobVertex.getProducedDataSets().get(i);
 
@@ -209,6 +216,7 @@ public class ExecutionJobVertex
                             result.getId(), this, numTaskVertices, result.getResultType());
         }
 
+        // TODO 实例化 ExecutionVertex 数组
         // create all task vertices
         for (int i = 0; i < numTaskVertices; i++) {
             ExecutionVertex vertex =

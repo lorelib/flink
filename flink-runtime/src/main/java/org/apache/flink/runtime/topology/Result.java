@@ -23,6 +23,8 @@ import org.apache.flink.runtime.io.network.partition.ResultPartitionType;
 /**
  * Represents a data set produced by a {@link Vertex} Each result is produced by one {@link Vertex}.
  * Each result can be consumed by multiple {@link Vertex}.
+ *
+ * TODO 代表着由Vertex产生的数据集，每个result由一个vertex产生，每个result可以被多个vertex消费
  */
 public interface Result<
         VID extends VertexID,

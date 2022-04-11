@@ -152,6 +152,7 @@ public class ExecutionVertex
 
         this.resultPartitions = new LinkedHashMap<>(producedDataSets.length, 1);
 
+        // TODO 将 IntermediateResult[] 绑定到 ExecutionVertex
         for (IntermediateResult result : producedDataSets) {
             IntermediateResultPartition irp =
                     new IntermediateResultPartition(result, this, subTaskIndex);
@@ -160,10 +161,12 @@ public class ExecutionVertex
             resultPartitions.put(irp.getPartitionId(), irp);
         }
 
+        // TODO 构建 ExecutionEdge 数组
         this.inputEdges = new ExecutionEdge[jobVertex.getJobVertex().getInputs().size()][];
 
         this.priorExecutions = new EvictingBoundedList<>(maxPriorExecutionHistoryLength);
 
+        // TODO 创建 Execution
         this.currentExecution =
                 new Execution(
                         getExecutionGraph().getFutureExecutor(),
@@ -181,6 +184,7 @@ public class ExecutionVertex
             this.locationConstraint = null;
         }
 
+        // TODO 注册 Execution
         getExecutionGraph().registerExecution(currentExecution);
 
         this.timeout = timeout;

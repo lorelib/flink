@@ -69,6 +69,7 @@ public class IntermediateResult {
         checkArgument(numParallelProducers >= 1);
         this.numParallelProducers = numParallelProducers;
 
+        // TODO 创建IntermediateResultPartition数组，大小等于JobVertex并行度
         this.partitions = new IntermediateResultPartition[numParallelProducers];
 
         this.numberOfRunningProducers = new AtomicInteger(numParallelProducers);

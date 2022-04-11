@@ -28,6 +28,8 @@ import java.util.Set;
 /**
  * Component which encapsulates the scheduling logic. It can react to execution state changes and
  * partition consumable events. Moreover, it is responsible for resolving task failures.
+ *
+ * TODO 封装了调度逻辑，能根据 【执行状态变化】 和 【分区包含可消费的事件时】 做出反应，并且它也负责处理任务的失败
  */
 public interface SchedulingStrategy {
 
@@ -53,6 +55,8 @@ public interface SchedulingStrategy {
      * Called whenever an {@link IntermediateResultPartition} becomes consumable.
      *
      * @param resultPartitionId The id of the result partition
+     *
+     * IntermediateResultPartition包含可消费事件时触发
      */
     void onPartitionConsumable(IntermediateResultPartitionID resultPartitionId);
 }

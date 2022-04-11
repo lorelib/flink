@@ -278,6 +278,7 @@ public abstract class SchedulerBase implements SchedulerNG, CheckpointScheduling
         return newExecutionGraph;
     }
 
+    // TODO 触发创建 ExecutionGraph
     private ExecutionGraph createExecutionGraph(
             JobManagerJobMetricGroup currentJobManagerJobMetricGroup,
             ShuffleMaster<?> shuffleMaster,

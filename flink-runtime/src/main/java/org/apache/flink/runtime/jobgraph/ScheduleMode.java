@@ -19,11 +19,13 @@
 package org.apache.flink.runtime.jobgraph;
 
 /** The ScheduleMode decides how tasks of an execution graph are started. */
-// TODO 调度模型ScheduleMode决定着一个任务的执行graph如何开始
+// TODO 调度模型ScheduleMode决定着如何启动执行图的任务
 public enum ScheduleMode {
     /**
      * Schedule tasks lazily from the sources. Downstream tasks are started once their input data
      * are ready
+     *
+     * TODO 从数据源懒调度任务，直到输入数据准备好，下游算子才开始执行
      */
     LAZY_FROM_SOURCES(true),
 
@@ -32,10 +34,14 @@ public enum ScheduleMode {
      * support the execution of jobs with fewer slots than requested. However, the user needs to
      * make sure that the job does not contain any pipelined shuffles (every pipelined region can be
      * executed with a single slot).
+     *
+     * TODO 跟LAZY_FROM_SOURCES相似，不同的是它用于批量资源申请，并且支持当申请的资源不够时也能执行job；
+     *  确保job没有任何shuffles, 每块区域可以被一个单独的slot处理
      */
     LAZY_FROM_SOURCES_WITH_BATCH_SLOT_REQUEST(true),
 
     /** Schedules all tasks immediately. */
+    // TODO 立即启动所有任务
     EAGER(false);
 
     private final boolean allowLazyDeployment;
