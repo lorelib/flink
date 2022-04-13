@@ -168,6 +168,7 @@ public class TaskManagerRunner implements FatalErrorHandler {
                         ExternalResourceUtils.externalResourceDriversFromConfig(
                                 configuration, pluginManager));
 
+        // TODO 创建 TaskExecutor ，它才是的TaskManager的核心
         taskExecutorService =
                 taskExecutorServiceFactory.createTaskExecutor(
                         this.configuration,
@@ -210,6 +211,10 @@ public class TaskManagerRunner implements FatalErrorHandler {
     // --------------------------------------------------------------------------------------------
 
     public void start() throws Exception {
+        /**
+         * TODO 调用
+         * @see TaskExecutorToServiceAdapter#start
+         */
         taskExecutorService.start();
     }
 
@@ -358,14 +363,18 @@ public class TaskManagerRunner implements FatalErrorHandler {
         final TaskManagerRunner taskManagerRunner;
 
         try {
-            // TODO 初始化TaskManagerRunner
+            // TODO 初始化TaskManagerRunner，创建基础服务和TaskExecutor核心
             taskManagerRunner =
                     new TaskManagerRunner(
                             configuration,
                             resourceId,
                             pluginManager,
+                            // TODO 创建TaskExecutor工厂
                             TaskManagerRunner::createTaskExecutorService);
-            // TODO 真正开始启动TaskManager
+            /**
+             * TODO 启动TaskManager其实就是在启动TaskManager，它会触发
+             * @see TaskExecutor#onStart 方法调用
+             */
             taskManagerRunner.start();
         } catch (Exception exception) {
             throw new FlinkException("Failed to start the TaskManagerRunner.", exception);
@@ -443,6 +452,7 @@ public class TaskManagerRunner implements FatalErrorHandler {
             FatalErrorHandler fatalErrorHandler)
             throws Exception {
 
+        // TODO 创建TaskExecutor
         final TaskExecutor taskExecutor =
                 startTaskManager(
                         configuration,
@@ -522,6 +532,7 @@ public class TaskManagerRunner implements FatalErrorHandler {
 
         String metricQueryServiceAddress = metricRegistry.getMetricQueryServiceGatewayRpcAddress();
 
+        // TODO 创建 TaskExecutor
         return new TaskExecutor(
                 rpcService,
                 taskManagerConfiguration,
@@ -533,7 +544,9 @@ public class TaskManagerRunner implements FatalErrorHandler {
                 metricQueryServiceAddress,
                 blobCacheService,
                 fatalErrorHandler,
+                // TODO 创建 task executor 分区跟踪器
                 new TaskExecutorPartitionTrackerImpl(taskManagerServices.getShuffleEnvironment()),
+                // TODO 创建背压采样服务
                 createBackPressureSampleService(configuration, rpcService.getScheduledExecutor()));
     }
 

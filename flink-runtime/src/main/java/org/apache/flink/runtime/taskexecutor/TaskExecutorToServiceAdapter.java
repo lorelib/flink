@@ -34,6 +34,10 @@ public class TaskExecutorToServiceAdapter implements TaskManagerRunner.TaskExecu
 
     @Override
     public void start() {
+        /**
+         * TODO 它会触发
+         * @see TaskExecutor#onStart 方法调用
+         */
         taskExecutor.start();
     }
 

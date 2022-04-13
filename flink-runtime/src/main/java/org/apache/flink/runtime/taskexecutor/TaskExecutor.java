@@ -309,8 +309,10 @@ public class TaskExecutor extends RpcEndpoint implements TaskExecutorGateway {
 
         final ResourceID resourceId =
                 taskExecutorServices.getUnresolvedTaskManagerLocation().getResourceID();
+        // TODO 创建Job Manager心跳管理器
         this.jobManagerHeartbeatManager =
                 createJobManagerHeartbeatManager(heartbeatServices, resourceId);
+        // TODO 创建Resource Manager心跳管理器
         this.resourceManagerHeartbeatManager =
                 createResourceManagerHeartbeatManager(heartbeatServices, resourceId);
     }
@@ -368,6 +370,7 @@ public class TaskExecutor extends RpcEndpoint implements TaskExecutorGateway {
     @Override
     public void onStart() throws Exception {
         try {
+            // TODO 启动TaskExecutor服务
             startTaskExecutorServices();
         } catch (Throwable t) {
             final TaskManagerException exception =
