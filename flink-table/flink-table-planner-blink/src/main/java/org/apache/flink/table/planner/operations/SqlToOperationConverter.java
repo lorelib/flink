@@ -149,6 +149,8 @@ import java.util.Optional;
  *
  * <p>Every #convert() should return a {@link Operation} which can be used in {@link
  * org.apache.flink.table.delegation.Planner}.
+ *
+ * TODO 将SqlNode转化为Operation
  */
 public class SqlToOperationConverter {
     private final FlinkPlannerImpl flinkPlanner;
@@ -176,13 +178,18 @@ public class SqlToOperationConverter {
      * @param flinkPlanner FlinkPlannerImpl to convertCreateTable sql node to rel node
      * @param catalogManager CatalogManager to resolve full path for operations
      * @param sqlNode SqlNode to execute on
+     *
+     * TODO 转换各种 DDL/DML SQL操作
      */
     public static Optional<Operation> convert(
             FlinkPlannerImpl flinkPlanner, CatalogManager catalogManager, SqlNode sqlNode) {
         // validate the query
+        // TODO 校验 SqlNode
         final SqlNode validated = flinkPlanner.validate(sqlNode);
+        // TODO 创建转化器对象，每次都是new
         SqlToOperationConverter converter =
                 new SqlToOperationConverter(flinkPlanner, catalogManager);
+        // TODO 判断 SqlNode 是哪种类型的SQL语句，以做对应的处理
         if (validated instanceof SqlCreateTable) {
             return Optional.of(
                     converter.createTableConverter.convertCreateTable((SqlCreateTable) validated));
@@ -233,6 +240,7 @@ public class SqlToOperationConverter {
         } else if (validated instanceof SqlRichDescribeTable) {
             return Optional.of(converter.convertDescribeTable((SqlRichDescribeTable) validated));
         } else if (validated.getKind().belongsTo(SqlKind.QUERY)) {
+            // TODO 处理查询语句
             return Optional.of(converter.convertSqlQuery(validated));
         } else {
             return Optional.empty();
@@ -862,6 +870,7 @@ public class SqlToOperationConverter {
 
     private PlannerQueryOperation toQueryOperation(FlinkPlannerImpl planner, SqlNode validated) {
         // transform to a relational tree
+        // 将SqlNode转化为关系树
         RelRoot relational = planner.rel(validated);
         return new PlannerQueryOperation(relational.project());
     }

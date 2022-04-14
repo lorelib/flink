@@ -42,6 +42,8 @@ public interface Parser {
      * @param statement the SQL statement to evaluate
      * @return parsed queries as trees of relational {@link Operation}s
      * @throws org.apache.flink.table.api.SqlParserException when failed to parse the statement
+     *
+     * TODO 解析 查询SQL的入口
      */
     List<Operation> parse(String statement);
 

@@ -434,6 +434,7 @@ public class LocalExecutor implements Executor {
         final ExecutionContext<?> context = getExecutionContext(sessionId);
         final TableEnvironment tableEnv = context.getTableEnvironment();
         final Parser parser = ((TableEnvironmentInternal) tableEnv).getParser();
+        // TODO 实例化Parser解析器
         return new Parser() {
             @Override
             public List<Operation> parse(String statement) {

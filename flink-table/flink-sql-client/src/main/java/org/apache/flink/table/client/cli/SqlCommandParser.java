@@ -85,6 +85,7 @@ public final class SqlCommandParser {
         if (callOpt.isPresent()) {
             return callOpt.get();
         } else {
+            // TODO 解析SQL
             return parseBySqlParser(sqlParser, stmt);
         }
     }
@@ -92,6 +93,7 @@ public final class SqlCommandParser {
     private static SqlCommandCall parseBySqlParser(Parser sqlParser, String stmt) {
         List<Operation> operations;
         try {
+            // TODO 解析得到逻辑执行计划
             operations = sqlParser.parse(stmt);
         } catch (Throwable e) {
             throw new SqlExecutionException("Invalidate SQL statement.", e);
@@ -103,6 +105,7 @@ public final class SqlCommandParser {
         final SqlCommand cmd;
         String[] operands = new String[] {stmt};
         Operation operation = operations.get(0);
+        // TODO 判断是哪种 SQL 命令
         if (operation instanceof CatalogSinkModifyOperation) {
             boolean overwrite = ((CatalogSinkModifyOperation) operation).isOverwrite();
             cmd = overwrite ? SqlCommand.INSERT_OVERWRITE : SqlCommand.INSERT_INTO;
@@ -168,6 +171,7 @@ public final class SqlCommandParser {
             throw new SqlExecutionException("Unknown operation: " + operation.asSummaryString());
         }
 
+        // TODO 封装成 SqlCommandCall对象
         return new SqlCommandCall(cmd, operands);
     }
 

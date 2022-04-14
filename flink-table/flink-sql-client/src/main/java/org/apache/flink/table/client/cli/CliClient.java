@@ -253,6 +253,7 @@ public class CliClient {
     private Optional<SqlCommandCall> parseCommand(String line) {
         final SqlCommandCall parsedLine;
         try {
+            // TODO 解析命令行提交的sql
             parsedLine = SqlCommandParser.parse(executor.getSqlParser(sessionId), line);
         } catch (SqlExecutionException e) {
             printExecutionException(e);
@@ -261,6 +262,7 @@ public class CliClient {
         return Optional.of(parsedLine);
     }
 
+    // TODO 执行逻辑执行计划
     private void callCommand(SqlCommandCall cmdCall) {
         switch (cmdCall.command) {
             case QUIT:
@@ -307,6 +309,7 @@ public class CliClient {
                 callExplain(cmdCall);
                 break;
             case SELECT:
+                // TODO 查询
                 callSelect(cmdCall);
                 break;
             case INSERT_INTO:
@@ -557,6 +560,7 @@ public class CliClient {
     private void callSelect(SqlCommandCall cmdCall) {
         final ResultDescriptor resultDesc;
         try {
+            // TODO 执行查询
             resultDesc = executor.executeQuery(sessionId, cmdCall.operands[0]);
         } catch (SqlExecutionException e) {
             printExecutionException(e);

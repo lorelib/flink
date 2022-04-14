@@ -60,6 +60,9 @@ import static org.apache.flink.util.Preconditions.checkNotNull;
 /**
  * A manager for dealing with catalog objects such as tables, views, functions, and types. It
  * encapsulates all available catalogs and stores temporary objects.
+ *
+ * TODO 处理着catalog对象，比如：tables, views, functions, and types，
+ *  它封装了所有可用的catalog，并保存临时对象
  */
 @Internal
 public final class CatalogManager {

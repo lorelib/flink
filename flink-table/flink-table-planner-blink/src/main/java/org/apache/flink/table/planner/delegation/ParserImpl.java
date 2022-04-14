@@ -71,8 +71,10 @@ public class ParserImpl implements Parser {
         CalciteParser parser = calciteParserSupplier.get();
         FlinkPlannerImpl planner = validatorSupplier.get();
         // parse the sql query
+        // TODO 解析SQL生成SqlNode抽象语法树
         SqlNode parsed = parser.parse(statement);
 
+        // TODO 将SqlNode转化为Operation，这里面会对SqlNode做验证
         Operation operation =
                 SqlToOperationConverter.convert(planner, catalogManager, parsed)
                         .orElseThrow(() -> new TableException("Unsupported query: " + statement));

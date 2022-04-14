@@ -33,6 +33,8 @@ import java.io.Reader;
 
 /**
  * Thin wrapper around {@link SqlParser} that does exception conversion and {@link SqlNode} casting.
+ *
+ * TODO 对 calcite 的 SqlParser 做了薄薄的封装
  */
 public class CalciteParser {
     private final SqlParser.Config config;
@@ -50,7 +52,9 @@ public class CalciteParser {
      */
     public SqlNode parse(String sql) {
         try {
+            // TODO 创建SQL解析器
             SqlParser parser = SqlParser.create(sql, config);
+            // TODO 解析SQL，返回SqlNode抽象语法树
             return parser.parseStmt();
         } catch (SqlParseException e) {
             throw new SqlParserException("SQL parse failed. " + e.getMessage(), e);
